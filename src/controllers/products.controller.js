@@ -40,10 +40,6 @@ export const getById = async (req, res) =>{
 
 export const getProducts = async (req, res) =>{
     const{limit, page, sort, category , status} = req.query;
-    const sid = req.params.sid;
-    const lid = req.params.lid;
-    const qid = req.params.qid;
-    const qcid = req.params.qcid;
     try{
         let products = await product.getProducts(limit, page, sort, category, status);
         res.status(200).send(products);
@@ -51,3 +47,38 @@ export const getProducts = async (req, res) =>{
         res.status(500).sned(err.message)
     };
 };
+
+// ACTUALIZAR PRODUCTOS
+
+export const updateProduct = async (req, res) => {
+    try{
+        const pid = req.params.pid;
+        const id = await product.getProductById(pid);
+        const producto = await product.updateProduct(pid, req.body);
+        const idHex = id._id.toString();
+        if(pid === idHex){
+            res.status(200).send({ status: "success", producto })
+        } else {
+            res.status(400).send({status: "Error404d"})
+        }
+       
+    } catch(err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+};
+
+// export const getById = async (req, res) =>{
+//     try {
+//         const pid = req.params.pid;
+//         const producto = await product.getProductById(pid);
+//         if(producto){
+//             res.status(200).send({status: "Sucess", producto});
+//         } else{
+            
+//         };
+//     } catch(err){
+//         console.log(err);
+//         res.status(400).send(err);
+//     };
+// };

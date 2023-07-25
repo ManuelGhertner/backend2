@@ -88,8 +88,15 @@ getProducts = async(limit, page, sort, category, status) =>{
     } catch (err) {
         return err;
     }
+};
 
-
+// ACTUALIZAR PRODUCTO
+updateProduct = async(id, object) =>{
+    try{
+        await productModel.findByIdAndUpdate({"_id": new mongoose.Types.ObjectId(id)}, object);
+    } catch(err){
+        return err;
+    }
 }
 }
 
