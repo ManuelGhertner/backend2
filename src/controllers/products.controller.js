@@ -35,3 +35,19 @@ export const getById = async (req, res) =>{
         res.status(400).send(err);
     };
 };
+
+// OBTENER PRODUCTOS
+
+export const getProducts = async (req, res) =>{
+    const{limit, page, sort, category , status} = req.query;
+    const sid = req.params.sid;
+    const lid = req.params.lid;
+    const qid = req.params.qid;
+    const qcid = req.params.qcid;
+    try{
+        let products = await product.getProducts(limit, page, sort, category, status);
+        res.status(200).send(products);
+    } catch(err){
+        res.status(500).sned(err.message)
+    };
+};

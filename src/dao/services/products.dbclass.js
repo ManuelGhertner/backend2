@@ -32,6 +32,7 @@ addProduct = async (product) =>{
     };
 };
 
+// OBTENER PRODUCTO POR ID
 getProductById = async (id) =>{
     try {
         return await productModel.findById({"_id": new mongoose.Types.ObjectId(id)}).lean();
@@ -41,6 +42,55 @@ getProductById = async (id) =>{
     }
 };
 
+// OBTENER PRODUCTOS
+getProducts = async(limit, page, sort, category, status) =>{
+    let data = {
+        limit: limit || 3,
+        page: page || 1,
+        sort: sort === "asc" ? {price: 1} : "" || sort === "desc" ? {price: -1} : "",
+        lean: true
+    };
+    let query = {};
+
+    if(category) {
+        query.category = category;
+    };
+
+    if(status){
+        query.status = status;
+    };
+    try {
+        let products = await productModel.paginate(query, data);
+        let prevLink = `http://localhost:8000/api/products/?page=${products.prevPage}&limit=${products.limit}&sort=${sort}` || null
+        let nextLink = `http://localhost:8000/api/products/?page=${products.nextPage}&limit=${products.limit}&sort=${sort}` || null
+
+        const productFind = () => {
+            if(Boolean(products.docs)) {
+                return "success";
+            } else {
+                return "error";
+            }
+        }
+
+        return {
+            status: productFind(),
+            payload: products.docs,
+            totalDocs: products.totalDocs,
+            limit: products.limit,
+            totalPages: products.totalPages,
+            page: products.page,
+            pagingCounter: products.pagingCounter,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage,
+            prevLink: prevLink,
+            nextLink: nextLink
+        }
+    } catch (err) {
+        return err;
+    }
+
+
+}
 }
 
 export default productsDB;
