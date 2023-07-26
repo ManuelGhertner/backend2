@@ -59,7 +59,7 @@ export const updateProduct = async (req, res) => {
         if(pid === idHex){
             res.status(200).send({ status: "success", producto })
         } else {
-            res.status(400).send({status: "Error404d"})
+            res.status(400).send({status: "Error404"})
         }
        
     } catch(err) {
@@ -68,17 +68,14 @@ export const updateProduct = async (req, res) => {
     }
 };
 
-// export const getById = async (req, res) =>{
-//     try {
-//         const pid = req.params.pid;
-//         const producto = await product.getProductById(pid);
-//         if(producto){
-//             res.status(200).send({status: "Sucess", producto});
-//         } else{
-            
-//         };
-//     } catch(err){
-//         console.log(err);
-//         res.status(400).send(err);
-//     };
-// };
+// ELIMINAR PRODUCTOS
+
+export const deleteProduct = async (req, res) =>{
+    try{
+        const pid = req.params.pid;
+        await product.deleteProduct(pid);
+        res.status(200).send({ status: "OK", msg: "Producto eliminado"});
+    } catch (err){
+        res.status(500).send({ status: "Error", error: err})
+    };
+};

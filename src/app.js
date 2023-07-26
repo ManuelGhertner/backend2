@@ -1,10 +1,14 @@
 import {} from "dotenv/config";
 import express from "express";
 import http from "http";
-// import passport, { initialize } from "passport";
+import passport from "passport";
 import mongoose from "mongoose";
 import session from "express-session";
 import { Server } from "socket.io";
+import initializePassport from "./passport/passport.strategies.js";
+import { engine } from "express-handlebars";
+import { __dirname } from "./utils.js";
+import routerViews from "./routes/views.routes.js";
 import productsRouter from "./routes/products.routes.js";
 import MongoStore from "connect-mongo";
 import productsDB from "./dao/services/products.dbclass.js";
@@ -44,18 +48,21 @@ server.use (session({
 
 // PASSPORT
 
-// initializePassport();
-// server.use(passport.initialize());
-// server.use(passport.session());
+initializePassport();
+server.use(passport.initialize());
+server.use(passport.session());
 
 // ENDPOINTS
 
-server.use("/api", productsRouter)
+server.use("/api", productsRouter);
+server.use("/", routerViews(store));
 
 // PLANTILLAS
-
+server.engine("handlebars", engine ({defaultLayout: "main", extname: ".handlebars"}));
+server.set('view engine', 'handlebars');
+server.set('views', './views');
 // STATIC
-
+server.use('/public', express.static(`${__dirname}/public`));
 // EVENTOS SOCKET.IO
 
 

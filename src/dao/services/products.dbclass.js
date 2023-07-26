@@ -97,7 +97,18 @@ updateProduct = async(id, object) =>{
     } catch(err){
         return err;
     }
-}
+};
+
+// ELIMINAR PRODUCTO
+
+deleteProduct = async(id) =>{
+    try{
+        const deleter = await productModel.deleteOne({"_id": new mongoose.Types.ObjectId(id)});
+        deleter.deletedCount === 0 ? console.log("El ID no existe") : console.log("Producto eliminado");;
+    } catch (err) {
+        return err;
+    }
+};
 }
 
 export default productsDB;
