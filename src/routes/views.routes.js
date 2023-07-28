@@ -1,4 +1,4 @@
-import { realTimeProducts, register } from "../controllers/views.controller.js";
+import { realTimeProducts, register, login, verifySession, logout } from "../controllers/views.controller.js";
 import { Router } from "express";
 import passport from "passport";
 
@@ -16,8 +16,21 @@ const routerViews = () =>{
 });
 
 
+
+// LOGIN
+router.post("/login", passport.authenticate("login", { failureRedirect: "/failedLogin" }), login);
+
+// VERIFICAR SESION
+
+router.get("/", verifySession);
+
+// LOGOUT
+
+router.get("/logout", logout);
+
     return router;
 };
+
 
 
 

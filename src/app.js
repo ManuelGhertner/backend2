@@ -12,7 +12,8 @@ import routerViews from "./routes/views.routes.js";
 import productsRouter from "./routes/products.routes.js";
 import MongoStore from "connect-mongo";
 import productsDB from "./dao/services/products.dbclass.js";
-
+import { store } from "./utils.js";
+import sessionRoutes from "./routes/sessions.routes.js";
 const COOKIE_SECRET = process.env.COOKIE_SECRET
 const PORT = process.env.PORT;
 const MONGOOSE_URL = process.env.MONGOOSE_URL;
@@ -33,9 +34,6 @@ const io = new Server(httpServer, {
 
 server.use(express.json());
 server.use(express.urlencoded({ extended: true}));
-// GESTION DE SESIONES
-
-const store = MongoStore.create({mongoUrl: MONGOOSE_URL, mongoOptions: {}, ttl:60});
 
 // SESIONES
 
@@ -56,6 +54,7 @@ server.use(passport.session());
 
 server.use("/api", productsRouter);
 server.use("/", routerViews(store));
+server.use("/api/sessions", sessionRoutes());
 
 // PLANTILLAS
 server.engine("handlebars", engine ({defaultLayout: "main", extname: ".handlebars"}));

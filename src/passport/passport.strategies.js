@@ -3,6 +3,7 @@ import { Strategy as GithubStrategy } from "passport-github2";
 import local from "passport-local";
 import passport from "passport";
 import userModel from "../dao/models/users.model.js";
+import {} from "dotenv/config";
 
 const LocalStrategy = local.Strategy;
 
@@ -35,13 +36,63 @@ const initializePassport = () =>{
 
     // LOGIN
 
-    // passport.use("login", new LocalStrategy({usernameField: "email", passReqToCallback: true},
-    // async (req, email, password, done) =>{
-    //     try{
+    passport.use("login", new LocalStrategy({usernameField: "email", passReqToCallback: true},
+    async (req, email, password, done) =>{
+        try{
+             const user = await userModel.findOne({email}) // .populate("cart");
+            if(!user){
+                req.session.errorMessages = "El usuario no esta registrado";
+                return done (null, false, {message: "El usuario no esta registrado"});
+            };
+            if(!validPassword(password, user)){
+                req.session.errorMessages = "Contraseña incorrecta";
+                return done(null, false, { message: "Contraseña incorrecta"});
+            };
+            return done (null, user);       
+        } catch (err){
+            return done(err);
+        }
+    }
+    ));
 
-    //     }
-    // }
-    // ))
+    // LOGIN CON GITHUB
+
+    const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID
+    const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+    const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL;
+
+    const githubData = {
+        clientID: GITHUB_CLIENT_ID,
+        clientSecret: GITHUB_CLIENT_SECRET,
+        callbackURL: GITHUB_CALLBACK_URL
+    };
+
+    const verifyAuthGithub = async (accessToken, refreshToken, profile, done) => {
+        try {
+            const email = profile._json.email == null ? profile._json.username : null;
+            const user = await userModel.findOne({ email: profile._json.email });
+            console.log(user) 
+            console.log("profile :", profile);
+
+            if(!user) {
+                const newUser = {
+                    firstName: profile._json.login,
+                    email: email,
+                    id: profile._json.id,
+                }
+                const createdUser = await userModel.create(newUser);
+                done(null, createdUser)
+            } else {
+                done(null, user);
+            }
+        } catch(error) {
+            return done(null, error);
+        }
+    };
+    
+    passport.use(new GithubStrategy(githubData, verifyAuthGithub));
+
+
         // SERIALIZE
         passport.serializeUser((user, done) => {
             done(null, user);
