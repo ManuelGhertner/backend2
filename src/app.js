@@ -1,4 +1,4 @@
-import {} from "dotenv/config";
+import config from "./config.js";
 import express from "express";
 import http from "http";
 import passport from "passport";
@@ -14,9 +14,7 @@ import MongoStore from "connect-mongo";
 import productsDB from "./dao/services/products.dbclass.js";
 import { store } from "./utils.js";
 import sessionRoutes from "./routes/sessions.routes.js";
-const COOKIE_SECRET = process.env.COOKIE_SECRET
-const PORT = process.env.PORT;
-const MONGOOSE_URL = process.env.MONGOOSE_URL;
+
 
 // EXPRESS Y SOCKET.IO
 
@@ -39,7 +37,7 @@ server.use(express.urlencoded({ extended: true}));
 
 server.use (session({
     store: store,
-    secret: COOKIE_SECRET,
+    secret: config.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
 }));
@@ -69,9 +67,9 @@ server.use('/public', express.static(`${__dirname}/public`));
 // CONEXION SERVIDOR
 
 try {
-    await mongoose.connect(MONGOOSE_URL);
-    server.listen(PORT, () =>{
-        console.log(`Servidor iniciado en puerto: ${PORT}`);
+    await mongoose.connect(config.MONGOOSE_URL);
+    server.listen(config.PORT, () =>{
+        console.log(`Servidor iniciado en puerto: ${config.PORT}`);
     });
 } catch (err){
     console.log(err);

@@ -1,13 +1,13 @@
 import * as url from "url";
 import bcrypt from "bcrypt";
 import  jwt  from "jsonwebtoken";
-import {} from "dotenv/config";
+import config from "./config.js";
 import MongoStore from "connect-mongo"
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-const MONGOOSE_URL = process.env.MONGOOSE_URL;
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const MONGOOSE_URL = config.MONGOOSE_URL;
+const PRIVATE_KEY = config.PRIVATE_KEY;
 //BCRYPT
 
 // HASHEO
