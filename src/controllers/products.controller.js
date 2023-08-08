@@ -1,6 +1,8 @@
-import productsDB from "../dao/services/products.dbclass.js";
-
-const product = new productsDB();
+// import ProductsDB from "../dao/services/products.dbclass.js";
+// import ProductsDB from "../dao/services/products.local.js"
+import factoryProduct from "../dao/services/factory.js";
+const product = new factoryProduct("../src/db/products.json");
+// const product = new ProductsDB();
 
 // AGREGAR PRODUCTOS
 
@@ -44,7 +46,7 @@ export const getProducts = async (req, res) =>{
         let products = await product.getProducts(limit, page, sort, category, status);
         res.status(200).send(products);
     } catch(err){
-        res.status(500).sned(err.message)
+        res.status(500).send(err.message)
     };
 };
 

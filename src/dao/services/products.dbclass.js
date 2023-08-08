@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import productModel from "../models/products.model.js";
 
-class productsDB {
+class ProductsDB {
     static newId = 0;
 
     constructor(){
@@ -111,4 +111,4 @@ deleteProduct = async(id) =>{
 };
 }
 
-export default productsDB;
+export default ProductsDB;

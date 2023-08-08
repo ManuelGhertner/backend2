@@ -2,7 +2,7 @@ import config from "./config.js";
 import express from "express";
 import http from "http";
 import passport from "passport";
-import mongoose from "mongoose";
+// import MongoSingleton from "./dao/services/mongo.class.js";
 import session from "express-session";
 import { Server } from "socket.io";
 import initializePassport from "./passport/passport.strategies.js";
@@ -11,7 +11,7 @@ import { __dirname } from "./utils.js";
 import routerViews from "./routes/views.routes.js";
 import productsRouter from "./routes/products.routes.js";
 import MongoStore from "connect-mongo";
-import productsDB from "./dao/services/products.dbclass.js";
+import ProductsDB from "./dao/services/products.dbclass.js";
 import { store } from "./utils.js";
 import sessionRoutes from "./routes/sessions.routes.js";
 
@@ -67,7 +67,7 @@ server.use('/public', express.static(`${__dirname}/public`));
 // CONEXION SERVIDOR
 
 try {
-    await mongoose.connect(config.MONGOOSE_URL);
+    // MongoSingleton.getInstance();
     server.listen(config.PORT, () =>{
         console.log(`Servidor iniciado en puerto: ${config.PORT}`);
     });

@@ -1,9 +1,9 @@
-import productsDB from "../dao/services/products.dbclass.js";
+import ProductsDB from "../dao/services/products.dbclass.js";
 import productModel from "../dao/models/products.model.js";
 import { generateToken } from "../utils.js";
 import { store } from "../utils.js";
 
-const products = new productsDB();
+const products = new ProductsDB();
 
 // REALTIME PRODUCTS
 export const realTimeProducts = async (req, res) => {
