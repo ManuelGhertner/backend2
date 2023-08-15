@@ -16,10 +16,10 @@ const sessionRoutes = () => {
     })
 
 
-    // //CURRENT. Datos de usuario
-    // routes.get("/current", (req, res) => {
-    //     res.send({ status: "success", payload: req.user });
-    // });
+    //CURRENT. Datos de usuario
+    routes.get("/current", (req, res) => {
+        res.send({ status: "success", payload: req.user });
+    });
     
     return routes;
 }

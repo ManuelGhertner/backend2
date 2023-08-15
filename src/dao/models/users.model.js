@@ -9,10 +9,18 @@ const schema = new mongoose.Schema({
     lastName: { type: String, trim: true },
     email: { type: String, trim: true },
     password: { type: String },
-    // cart: { 
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "carts"
-    // },
+    cart: { 
+        type: [
+            {
+                carts: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "carts"
+                },
+            },
+        ], 
+       default: [],
+
+    },
     role: { type: String, trim: true, default: "user", enum: ["user", "admin"] }
 });
 

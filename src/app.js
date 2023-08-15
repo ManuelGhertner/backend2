@@ -14,6 +14,8 @@ import MongoStore from "connect-mongo";
 import ProductsDB from "./dao/services/products.dbclass.js";
 import { store } from "./utils.js";
 import sessionRoutes from "./routes/sessions.routes.js";
+import cartsRouter from "./routes/carts.routes.js";
+import usersRouter from "./routes/user.routes.js";
 
 
 // EXPRESS Y SOCKET.IO
@@ -52,6 +54,8 @@ server.use(passport.session());
 
 server.use("/api", productsRouter);
 server.use("/", routerViews(store));
+server.use("/api", cartsRouter);
+server.use("/api", usersRouter)
 server.use("/api/sessions", sessionRoutes());
 
 // PLANTILLAS

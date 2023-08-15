@@ -15,9 +15,9 @@ productsRouter.put("/products/:pid([a-zA-Z0-9]+)", updateProduct);
 
 productsRouter.delete("/products/:pid([a-zA-Z0-9]+)", deleteProduct);
 
-productsRouter.get("*", async (req, res) =>{
-    res.status(400).send({status: "ERROR", msg: "Formato de parametro invalido"});
-});
+// productsRouter.get("*", async (req, res) =>{
+//     res.status(400).send({status: "ERROR", msg: "Formato de parametro invalido"});
+// });
 
 
 export default productsRouter;

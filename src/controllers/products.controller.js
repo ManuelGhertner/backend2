@@ -1,8 +1,5 @@
-// import ProductsDB from "../dao/services/products.dbclass.js";
-// import ProductsDB from "../dao/services/products.local.js"
 import factoryProduct from "../dao/services/factory.js";
 const product = new factoryProduct("../src/db/products.json");
-// const product = new ProductsDB();
 
 // AGREGAR PRODUCTOS
 
