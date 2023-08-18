@@ -1,7 +1,9 @@
 import ProductsDB from "../dao/services/products.dbclass.js";
 import productModel from "../dao/models/products.model.js";
+import cartModel from "../dao/models/carts.model.js";
 import { generateToken } from "../utils.js";
 import { store } from "../utils.js";
+import Carts from "../dao/services/carts.dbclass.js";
 
 const products = new ProductsDB();
 
@@ -20,6 +22,11 @@ export const register = async (req, res) => {
     }
 };
 
+export const profile = async (req, res) => {
+    //datos de usuario.
+    const user = req.session.user;
+    res.render("profile", {user: user})
+};
 // LOGIN
 
 export const login = async(req, res) =>{
@@ -37,6 +44,19 @@ export const login = async(req, res) =>{
     res.cookie("accessToken", accessToken, { httpOnly: true });
     
     res.redirect("/");
+};
+
+export const cart = async (req, res) => {
+    try {
+        let cid = req.params.cid;
+        let cart = await cartModel.getCartById(cid);
+        let productsInCart = cart.products;
+        console.log(cart);
+
+        res.render("carts", {productsInCart})
+    } catch(err) {
+        res.status(400).json(err.message)
+    }
 };
 
 // VERIFICAR SESION

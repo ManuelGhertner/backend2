@@ -16,6 +16,7 @@ const schema = new mongoose.Schema({
                     type: mongoose.Schema.Types.ObjectId,
                     ref: "carts"
                 },
+                _id: false,
             },
         ], 
        default: [],

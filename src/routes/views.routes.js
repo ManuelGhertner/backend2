@@ -1,6 +1,7 @@
-import { realTimeProducts, register, login, verifySession, logout } from "../controllers/views.controller.js";
+import { realTimeProducts, profile, register, login, verifySession, logout, cart } from "../controllers/views.controller.js";
 import { Router } from "express";
 import passport from "passport";
+import {validate, validateAdmin} from "../middlewares/validate.middleware.js"
 
 const routerViews = () =>{
     const router = Router();
@@ -15,6 +16,10 @@ const routerViews = () =>{
     res.send({ status: "OK", message: "Usuario registrado correctamente"});
 });
 
+ //CARTS
+ router.get("/carts/:cid", validate, cart);
+
+router.get("/profile", validate, profile);
 
 
 // LOGIN

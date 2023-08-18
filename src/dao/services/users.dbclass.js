@@ -1,6 +1,7 @@
 import userModel from "../models/users.model.js";
 import mongoose from "mongoose";
 import { createHash } from "../../utils.js";
+import cartModel from "../models/carts.model.js";
 
 class Users{
     constructor(){
@@ -53,19 +54,27 @@ class Users{
     addCartToUser = async (userId, cartId) => {
         try {
             let user = await userModel.findOne({ '_id': new mongoose.Types.ObjectId(userId) });
+            let cart = await cartModel.findOne({ '_id': new mongoose.Types.ObjectId(cartId) });
+            console.log(user);
+            console.log(cart);
             let carts = user.cart;
+            console.log( carts);
             let index = carts.findIndex((c) => c.carts._id == cartId);
+            console.log(index);
     
             if (index >= 0) {
                 // Carrito ya existe para este usuario
                 return "Cart already exists for this user.";
             } else {
                 let newCart = {
-                    cart: cartId,
-                    products: [] // Puedes inicializarlo con productos si es necesario
+                    carts: cart,
                 };
+                console.log(cart.products, "productos cart");
+                console.log(cartId);
+                console.log(newCart, "new cart");
+                console.log(user.cart.carts, "cart");
+                let result = await userModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(userId) }, {$push:{"cart":newCart}});
                 
-                let result = await userModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(userId) }, {$push:{"carts":newCart}});
                 return result;
             }
         } catch(err) {
