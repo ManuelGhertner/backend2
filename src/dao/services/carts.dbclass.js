@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import cartModel from '../models/carts.model.js';
 import userModel from '../models/users.model.js';
+import productModel from '../models/products.model.js';
 import ProductsDB from './products.dbclass.js';
 
 const product = new ProductsDB();
@@ -122,33 +123,66 @@ class Carts {
       try {
         // Obtén el carrito y su contenido
         let id;
-        const {products} = await cartModel.getCartById(cartId);
+        let quantity;
+        const {products} = await cartModel.findById({ '_id': new mongoose.Types.ObjectId(cartId) }).lean().populate('products.product');
         console.log(products, "cart data");
         const productIds = []; 
+        const productQuantitys = []; 
         for (const productItem of products) {
             const producto = productItem.product;
-            console.log(producto);
+            quantity = productItem.quantity;
+            console.log(producto, "producto");
             id = producto._id.toString();
             productIds.push(id);
+            productQuantitys.push(quantity);
           }
           console.log(productIds);
-
+          console.log(productQuantitys, "cantidad");
           let canPurchase = true; // Variable para verificar si se puede comprar
         
-          for (const productId of productIds) {
-              const item = await product.getProductById(productId);
-              console.log(item, "productos");
-              if (item.stock <= 0) {
-                  canPurchase = false;
-                  console.log("no hay stock");
-                  break; // Si un producto no tiene suficiente stock, no se puede comprar
-              } else {
-                console.log("hay stock");
-                item.stock -= 1; // O la cantidad que corresponda
-                await item.save(); // Guardar el cambio en la base de datos
+          for (let i = 0; i < productIds.length; i++) {
+            const productId = productIds[i];
+            const quantityToPurchase = productQuantitys[i];
+    
+            const item = await product.getProductById(productId);
+            console.log(item, "productos");
+            
+            if (item.stock < quantityToPurchase) {
+                canPurchase = false;
+                console.log("No hay suficiente stock para el producto:", item.title);
+                break; // Si un producto no tiene suficiente stock, no se puede comprar
+            } else {
+                console.log("Hay stock suficiente para el producto:", item.title);
+                
+                item.stock -= quantityToPurchase; // Resta la cantidad que se va a comprar
+                console.log(item.stock);
+                
+                await productModel.findByIdAndUpdate(
+                    { '_id': new mongoose.Types.ObjectId(productId) },
+                    { $set: { stock: item.stock } }
+                );
+            }
+        }
+          // for (const productId of productIds) {
+          //     const item = await product.getProductById(productId);
+          //     console.log(item, "productos");
+          //     if (item.stock <= 0) {
+          //         canPurchase = false;
+          //         console.log("no hay stock");
+          //         break; // Si un producto no tiene suficiente stock, no se puede comprar
+          //     } else {
+          //       console.log("hay stock");
+          //       item.stock -= 1; // O la cantidad que corresponda
+          //       console.log(item.stock);
+          //       await productModel.findByIdAndUpdate(
+          //         { '_id': new mongoose.Types.ObjectId(productId) },
+          //         { $set: { stock: item.stock } }
+          //     );
+          //       // await item.save(); // Guardar el cambio en la base de datos
 
-              }
-          }
+          //     }
+          // }
+          return canPurchase;
   } catch(err) {
     console.log(err)
 }
