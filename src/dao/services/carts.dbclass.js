@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import cartModel from '../models/carts.model.js';
 import userModel from '../models/users.model.js';
+import ProductsDB from './products.dbclass.js';
 
+const product = new ProductsDB();
 class Carts {
     constructor(){
         this.status = 0;
@@ -116,9 +118,41 @@ class Carts {
         }
     }
 
+    purchaseCart = async(cartId) =>{
+      try {
+        // Obtén el carrito y su contenido
+        let id;
+        const {products} = await cartModel.getCartById(cartId);
+        console.log(products, "cart data");
+        const productIds = []; 
+        for (const productItem of products) {
+            const producto = productItem.product;
+            console.log(producto);
+            id = producto._id.toString();
+            productIds.push(id);
+          }
+          console.log(productIds);
 
-      
+          let canPurchase = true; // Variable para verificar si se puede comprar
+        
+          for (const productId of productIds) {
+              const item = await product.getProductById(productId);
+              console.log(item, "productos");
+              if (item.stock <= 0) {
+                  canPurchase = false;
+                  console.log("no hay stock");
+                  break; // Si un producto no tiene suficiente stock, no se puede comprar
+              } else {
+                console.log("hay stock");
+                item.stock -= 1; // O la cantidad que corresponda
+                await item.save(); // Guardar el cambio en la base de datos
 
+              }
+          }
+  } catch(err) {
+    console.log(err)
 }
+    }
 
+  }
 export default Carts;

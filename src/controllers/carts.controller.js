@@ -1,6 +1,8 @@
 import Carts from "../dao/services/carts.dbclass.js";
+import ProductsDB from "../dao/services/products.dbclass.js";
 
 const cart = new Carts();
+const product = new ProductsDB();
 
 // Crear carrito.
 export const createCart = async(req, res) => {
@@ -92,6 +94,7 @@ export const deleteAllProducts = async(req, res) => {
 // Obtener carrito por id.
 export const getCartById = async(req, res) => {
     const { cid } = req.params;
+    
 
     try {
         const data = await cart.getCartById(cid);
@@ -125,3 +128,57 @@ export const getCartByUserId = async (req, res) => {
     }
 };
 
+// export const purchaseCart = async (req, res) => {
+//     const cartId = req.params.cid;
+//     console.log(cartId);
+//    try{
+
+//    }
+
+//         res.status(200).json({ message: 'Compra exitosa' });
+//     } catch (err) {
+//         res.status(500).json({ message: err.message});
+//     }
+// };
+
+export const purchaseCart = async (req, res) => {
+    const cartId = req.params.cid;
+    console.log(cartId);
+
+    try {
+        // Obtén el carrito y su contenido
+        const cartData = await cart.getCartById(cartId);
+        const productsInCart = cartData.products;
+
+        const productIds = productsInCart.map(productItem => productItem.product._id);
+
+        let canPurchase = true;
+
+        // Verifica el stock de los productos en el carrito
+        for (const productId of productIds) {
+            const product = await product.getProductById(productId);
+            const productInCart = productsInCart.find(productItem => productItem.product._id.equals(productId));
+
+            if (product.stock < productInCart.quantity) {
+                canPurchase = false;
+                break; // Si un producto no tiene suficiente stock, no se puede comprar
+            }
+        }
+
+        if (canPurchase) {
+            // Resta el stock de los productos y realiza otras operaciones de compra aquí
+            for (const productId of productIds) {
+                await product.reduceProductStock(productId);
+            }
+
+            // Crea el ticket u otras operaciones relacionadas con la compra
+            // ...
+
+            res.status(200).json({ message: 'Compra exitosa' });
+        } else {
+            res.status(400).json({ message: 'No hay suficiente stock para completar la compra' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
