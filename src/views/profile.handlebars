@@ -43,11 +43,9 @@
                   <div class="col-4 mb-3">
                     <a href="/"><button type="button" class="btn btn-success">Productos</button></a>
                   </div>
- <div class="col-4 mb-3">
-    {{#with user.cart.[0] as |cart|}}
-        <a href="/api/carts/{{cart.carts}}"><button type="button" class="btn btn-success">Mi carrito</button></a>
-    {{/with}}
-</div>
+                    <div class="col-4 mb-3">
+                            <a href="/api/carts/{{user.id}}"><button type="button" class="btn btn-success">Mi carrito</button></a>
+                    </div>
                   <div class="col-4 mb-3">
                     <a href="/logout"><button type="button" class="btn btn-danger">Logout</button></a>
                   </div>

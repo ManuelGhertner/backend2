@@ -5,7 +5,9 @@ import { generateToken } from "../utils.js";
 import { store } from "../utils.js";
 import Carts from "../dao/services/carts.dbclass.js";
 
+
 const products = new ProductsDB();
+const carts = new Carts();
 
 // REALTIME PRODUCTS
 export const realTimeProducts = async (req, res) => {
@@ -49,7 +51,7 @@ export const login = async(req, res) =>{
 export const cart = async (req, res) => {
     try {
         let cid = req.params.cid;
-        let cart = await cartModel.getCartById(cid);
+        let cart = await carts.getCartByUserId(cid);
         let productsInCart = cart.products;
         console.log(cart);
 

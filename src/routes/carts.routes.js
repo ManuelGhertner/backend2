@@ -1,5 +1,5 @@
-import { addProductToCart, createCart, getCarts, deleteCart, getCartById } from "../controllers/carts.controller.js"
-// import { validate, validateAdmin } from "../middlewares/validate.middleware.js";
+import { addProductToCart, createCart, getCarts, deleteCart, getCartById, getCartByUserId } from "../controllers/carts.controller.js"
+import { validate, validateAdmin } from "../middlewares/validate.middleware.js";
 
 import { Router } from "express";
 
@@ -11,8 +11,12 @@ cartsRouter.post("/carts", createCart);
 // GET - Listar todos los carritos.
 cartsRouter.get("/carts",  getCarts);
 
+// GET - Listar carritos por ID.
+
+cartsRouter.get("/carts/:cid",  getCartByUserId);
+
 //POST - Agregar producto al carrito.
-cartsRouter.post("/carts/:cid/product/:pid",  addProductToCart);  
+cartsRouter.post("/carts/:cid/product/:pid",validate,  addProductToCart);  
 
 // //DELETE - Borrar carrito.
 cartsRouter.delete("/cartdelete/:cid",  deleteCart);

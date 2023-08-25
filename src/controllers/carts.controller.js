@@ -98,10 +98,28 @@ export const getCartById = async(req, res) => {
         const idHex = data._id.toString();
         if(cid === idHex){
             res.status(200).send({ message: "Carrito encontrado.", data:  data });
+            console.log(carrito);
         } else {
-            res.status(400).send({ status: "error", message: "Producto no encontrado" });
+            res.status(400).send({ status: "error", message: "Carrito no encontrado" });
         }
        
+    } catch(err) {
+        res.status(500).send({ status: "error", message: err.message });
+    }
+};
+
+
+export const getCartByUserId = async (req, res) => {
+    const { cid } = req.params;
+
+    try {
+        const cartData = await cart.getCartByUserId(cid);
+
+        if (cartData) {
+            res.status(200).send({ message: "Carrito encontrado.", data: cartData });
+        } else {
+            res.status(400).send({ status: "error", message: "Carrito no encontrado" });
+        }
     } catch(err) {
         res.status(500).send({ status: "error", message: err.message });
     }

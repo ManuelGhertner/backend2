@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import cartModel from '../models/carts.model.js';
+import userModel from '../models/users.model.js';
 
 class Carts {
     constructor(){
@@ -49,6 +50,27 @@ class Carts {
             console.log(err)
         }
     };
+
+   getCartByUserId = async (userId) => {
+    try {
+        const user = await userModel.findById(userId).lean();
+        if (!user) {
+            return null; // Retorna nulo si el usuario no se encuentra
+        }
+
+        const cartIdArray = user.cart.map(cartObj => cartObj.carts);
+        const firstCartId = cartIdArray[0];
+
+        const cartData = await cartModel
+            .findById(firstCartId)
+            .lean()
+            .populate('products.product');
+
+        return cartData;
+    } catch(err) {
+        throw err;
+    }
+};
 
     addProductToCart = async(cartId, productId) => {
         try {

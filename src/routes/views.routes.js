@@ -17,7 +17,7 @@ const routerViews = () =>{
 });
 
  //CARTS
- router.get("/carts/:cid", validate, cart);
+ router.get("/api/carts/:cid", validate, cart);
 
 router.get("/profile", validate, profile);
 
