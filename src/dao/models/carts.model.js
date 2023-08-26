@@ -20,6 +20,10 @@ const cartSchema = new mongoose.Schema({
             },
         ],
         default: [],
+    },
+    email: {
+        type: String,
+        trim: true
     }
 }, schemaOptions);
 

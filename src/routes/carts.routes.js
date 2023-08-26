@@ -6,7 +6,7 @@ import { Router } from "express";
 const cartsRouter = Router();
 
 //POST - Crear carrito.
-cartsRouter.post("/carts", createCart);
+cartsRouter.post("/carts", createCart, validate);
 
 // GET - Listar todos los carritos.
 cartsRouter.get("/carts",  getCarts);

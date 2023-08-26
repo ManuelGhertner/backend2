@@ -144,9 +144,9 @@ export const getCartByUserId = async (req, res) => {
 export const purchaseCart = async (req, res) => {
     const cartId = req.params.cid;
     console.log(cartId, "cartId");
-    
+    const { email } = req.body;
     try {
-        const canPurchase = await cart.purchaseCart(cartId);
+        const canPurchase = await cart.purchaseCartWithTicket(cartId,email);
     console.log(canPurchase, "compra");
 
             res.status(200).json({ message: 'Compra exitosa' });

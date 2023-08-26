@@ -3,6 +3,7 @@ import cartModel from '../models/carts.model.js';
 import userModel from '../models/users.model.js';
 import productModel from '../models/products.model.js';
 import ProductsDB from './products.dbclass.js';
+import ticketModel from '../models/ticket.model.js';
 
 const product = new ProductsDB();
 class Carts {
@@ -36,6 +37,17 @@ class Carts {
               this.statusMsg = `addCart: ${err}`; 
         }
       };
+
+      addEmailToCart = async (cartId, userEmail) => {
+        try {
+            await cartModel.findByIdAndUpdate(
+                { '_id': new mongoose.Types.ObjectId(cartId) },
+                { $set: { email: userEmail } }
+            );
+        } catch (err) {
+            return err;
+        }
+    };
 
       getCarts = async () =>{
         try {
@@ -163,30 +175,53 @@ class Carts {
                 );
             }
         }
-          // for (const productId of productIds) {
-          //     const item = await product.getProductById(productId);
-          //     console.log(item, "productos");
-          //     if (item.stock <= 0) {
-          //         canPurchase = false;
-          //         console.log("no hay stock");
-          //         break; // Si un producto no tiene suficiente stock, no se puede comprar
-          //     } else {
-          //       console.log("hay stock");
-          //       item.stock -= 1; // O la cantidad que corresponda
-          //       console.log(item.stock);
-          //       await productModel.findByIdAndUpdate(
-          //         { '_id': new mongoose.Types.ObjectId(productId) },
-          //         { $set: { stock: item.stock } }
-          //     );
-          //       // await item.save(); // Guardar el cambio en la base de datos
-
-          //     }
-          // }
           return canPurchase;
   } catch(err) {
     console.log(err)
 }
     }
 
-  }
+
+    purchaseCartWithTicket = async(cartId, purchaserEmail) => {
+      try {
+        // ... obtén el carrito y los productos ...
+  
+        const canPurchase = await this.purchaseCart(cartId);
+        const userCart = await cartModel.findById(cartId).populate('user', 'email'); // Popula el campo 'user' para obtener solo el correo
+        const purchaserEmail = userCart.email;
+        if (canPurchase) {
+          // // Calcula el monto total de la compra
+          // const totalAmount = product.reduce((total, productItem) => {
+          //   const item = productItem.product;
+          //   const quantityToPurchase = productItem.quantity;
+          //   return total + item.price * quantityToPurchase;
+          // }, 0);
+  
+          // Crea un nuevo ticket
+          const ticket = new ticketModel({
+            code: generateUniqueCode(), // Implementa una función para generar un código único
+            amount: totalAmount,
+            purchaser: purchaserEmail
+          });
+  
+          await ticket.save();
+  
+          // Actualiza el stock y realiza otras operaciones de compra aquí
+          for (const productItem of product) {
+            await product.reduceProductStock(productItem.product._id, productItem.quantity);
+          }
+  
+          return true; // La compra se realizó exitosamente
+        }
+  
+        return false; // No se puede realizar la compra debido a stock insuficiente
+      } catch (error) {
+        console.error(error);
+        return false; // Error al procesar la compra
+      }
+    }
+  };
+  
+
+  
 export default Carts;

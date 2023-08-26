@@ -74,7 +74,7 @@ class Users{
                 console.log(newCart, "new cart");
                 console.log(user.cart.carts, "cart");
                 let result = await userModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(userId) }, {$push:{"cart":newCart}});
-                
+                await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { $set: { email: user.email } });
                 return result;
             }
         } catch(err) {
