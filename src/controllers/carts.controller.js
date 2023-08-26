@@ -144,12 +144,17 @@ export const getCartByUserId = async (req, res) => {
 export const purchaseCart = async (req, res) => {
     const cartId = req.params.cid;
     console.log(cartId, "cartId");
-    const { email } = req.body;
     try {
-        const canPurchase = await cart.purchaseCartWithTicket(cartId,email);
-    console.log(canPurchase, "compra");
+        const cartData = await cart.getCartById(cartId);
+        const userEmail = cartData.email;
+        const canPurchase = await cart.purchaseCartWithTicket(cartId,userEmail);
+            console.log(canPurchase, "compra");
 
-            res.status(200).json({ message: 'Compra exitosa' });
+            if (canPurchase) {
+                res.status(200).json({ message: 'Compra exitosa' });
+            } else {
+                res.status(400).json({ message: 'No se pudo completar la compra' });
+            }
     
     } catch (err) {
         res.status(500).json({ message: err.message });

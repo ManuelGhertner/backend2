@@ -16,7 +16,7 @@ cartsRouter.get("/carts",  getCarts);
 cartsRouter.get("/carts/:cid",  getCartByUserId);
 
 //POST - Agregar producto al carrito.
-cartsRouter.post("/carts/:cid/product/:pid",validate,  addProductToCart);  
+cartsRouter.post("/carts/:cid/product/:pid",  addProductToCart);  
 
 // //DELETE - Borrar carrito.
 cartsRouter.delete("/cartdelete/:cid",  deleteCart);

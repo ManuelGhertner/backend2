@@ -39,15 +39,15 @@ class Carts {
       };
 
       addEmailToCart = async (cartId, userEmail) => {
-        try {
-            await cartModel.findByIdAndUpdate(
-                { '_id': new mongoose.Types.ObjectId(cartId) },
-                { $set: { email: userEmail } }
-            );
-        } catch (err) {
-            return err;
-        }
-    };
+    try {
+        await cartModel.findByIdAndUpdate(
+            { '_id': new mongoose.Types.ObjectId(cartId) },
+            { $set: { email: userEmail } }
+        );
+    } catch (err) {
+        return err;
+    }
+};
 
       getCarts = async () =>{
         try {
@@ -181,45 +181,63 @@ class Carts {
 }
     }
 
-
-    purchaseCartWithTicket = async(cartId, purchaserEmail) => {
-      try {
-        // ... obtén el carrito y los productos ...
-  
-        const canPurchase = await this.purchaseCart(cartId);
-        const userCart = await cartModel.findById(cartId).populate('user', 'email'); // Popula el campo 'user' para obtener solo el correo
-        const purchaserEmail = userCart.email;
-        if (canPurchase) {
-          // // Calcula el monto total de la compra
-          // const totalAmount = product.reduce((total, productItem) => {
-          //   const item = productItem.product;
-          //   const quantityToPurchase = productItem.quantity;
-          //   return total + item.price * quantityToPurchase;
-          // }, 0);
-  
-          // Crea un nuevo ticket
-          const ticket = new ticketModel({
-            code: generateUniqueCode(), // Implementa una función para generar un código único
-            amount: totalAmount,
-            purchaser: purchaserEmail
-          });
-  
-          await ticket.save();
-  
-          // Actualiza el stock y realiza otras operaciones de compra aquí
-          for (const productItem of product) {
-            await product.reduceProductStock(productItem.product._id, productItem.quantity);
-          }
-  
-          return true; // La compra se realizó exitosamente
-        }
-  
-        return false; // No se puede realizar la compra debido a stock insuficiente
-      } catch (error) {
-        console.error(error);
-        return false; // Error al procesar la compra
+     calculateTotalAmount = async (products) => {
+      let totalAmount = 0;
+      for (const productItem of products) {
+          const product = productItem.product;
+          const quantity = productItem.quantity;
+          totalAmount += product.price * quantity;
       }
+      return totalAmount;
+  };
+
+   generateUniqueCode = async () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const codeLength = 8;
+    let code = '';
+
+    for (let i = 0; i < codeLength; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        code += characters.charAt(randomIndex);
     }
+
+    return code;
+};
+
+    purchaseCartWithTicket = async (cartId, userEmail) => {
+      try {
+          const canPurchase = await this.purchaseCart(cartId);
+  
+          if (canPurchase) {
+              // Resta el stock y otras operaciones de compra aquí
+  
+              // Crear el ticket
+              const cartData = await cartModel.findById(cartId).populate('products.product');
+              const totalAmount = await this.calculateTotalAmount(cartData.products);
+              // const totalAmount = 10;
+              const ticket = new ticketModel({
+                  code: await this.generateUniqueCode(), // Implementar la función para generar códigos únicos
+                  amount: totalAmount,
+                  purchaser: userEmail,
+              });
+              await ticket.save();
+  
+              // Agregar el ID del ticket al carrito si es necesario
+              await cartModel.findByIdAndUpdate(
+                  { '_id': new mongoose.Types.ObjectId(cartId) },
+                  { $set: { ticket: ticket._id } }
+              );
+  
+              return true;
+          } else {
+              return false;
+          }
+      } catch(err) {
+          console.log(err);
+          return false;
+      }
+  };
+    
   };
   
 
