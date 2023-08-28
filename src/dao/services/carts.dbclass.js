@@ -131,15 +131,145 @@ class Carts {
         }
     }
 
-    purchaseCart = async(cartId) =>{
-      try {
+//     purchaseCart = async(cartId) =>{
+//       try {
+//         // Obtén el carrito y su contenido
+//         console.log("-----------------------------------------------");
+//         let id;
+//         let quantity;
+//         const outOfStockProductIds = [];
+//         const {products} = await cartModel.findById({ '_id': new mongoose.Types.ObjectId(cartId) }).lean().populate('products.product');
+//         console.log(products, "cart data");
+//         const productIds = []; 
+//         const productQuantitys = []; 
+//         for (const productItem of products) {
+//             const producto = productItem.product;
+//             quantity = productItem.quantity;
+//             console.log(producto, "producto");
+//             id = producto._id.toString();
+//             productIds.push(id);
+//             productQuantitys.push(quantity);
+//           }
+//           console.log(productIds);
+//           console.log(productQuantitys, "cantidad");
+//           let canPurchase = true; // Variable para verificar si se puede comprar
+        
+//           for (let i = 0; i < productIds.length; i++) {
+//             const productId = productIds[i];
+//             const quantityToPurchase = productQuantitys[i];
+    
+//             const item = await product.getProductById(productId);
+//             console.log(item, "productos");
+            
+//             if (item.stock < quantityToPurchase) {
+//                 canPurchase = false;
+//                 console.log("No hay suficiente stock para el producto:", item.title);
+//                 outOfStockProductIds.push(productId);
+//                 console.log(outOfStockProductIds, "outofstock");
+               
+//             } else {
+//                 console.log("Hay stock suficiente para el producto:", item.title);
+                
+//                 item.stock -= quantityToPurchase; // Resta la cantidad que se va a comprar
+//                 console.log(item.stock);
+                
+//                 await productModel.findByIdAndUpdate(
+//                     { '_id': new mongoose.Types.ObjectId(productId) },
+//                     { $set: { stock: item.stock } }
+//                 );
+//             }
+//         }
+      
+//           return canPurchase;
+//   } catch(err) {
+//     console.log(err)
+// }
+//     }
+
+// purchaseCart = async(cartId) => {
+//     try {
+//         // Obtén el carrito y su contenido
+//         console.log("-----------------------------------------------");
+//         let id;
+//         let quantity;
+//         const outOfStockProductIds = [];
+//         const inStockProducts = [];
+//         const productsPurchased = [];
+//         const { products } = await cartModel.findById({ '_id': new mongoose.Types.ObjectId(cartId) }).lean().populate('products.product');
+//         console.log(products, "cart data");
+//         const productIds = [];
+//         const productQuantitys = [];
+        
+//         for (const productItem of products) {
+//             const producto = productItem.product;
+//             quantity = productItem.quantity;
+//             console.log(producto, "producto");
+//             id = producto._id.toString();
+//             productIds.push(id);
+//             productQuantitys.push(quantity);
+//         }
+        
+//         console.log(productIds);
+//         console.log(productQuantitys, "cantidad");
+        
+//         for (let i = 0; i < productIds.length; i++) {
+//             const productId = productIds[i];
+//             const quantityToPurchase = productQuantitys[i];
+
+//             const item = await product.getProductById(productId);
+//             console.log(item, "productos");
+
+//             if (item.stock < quantityToPurchase) {
+//                 console.log("No hay suficiente stock para el producto:", item.title);
+//                 outOfStockProductIds.push(productId);
+//                 console.log(outOfStockProductIds, "outofstock");
+//             } else {
+//                 console.log("Hay stock suficiente para el producto:", item.title);
+//                 inStockProducts.push({
+//                     product: item,
+//                     quantityToPurchase
+//                 });
+//             }
+//         }
+
+//         if (inStockProducts.length === 0) {
+//             return false; // Ningún producto tiene stock suficiente
+//         }
+        
+//         for (const inStockProduct of inStockProducts) {
+//             const productId = inStockProduct.product._id.toString();
+//             const quantityToPurchase = inStockProduct.quantityToPurchase;
+
+//             const item = await product.getProductById(productId);
+            
+//             item.stock -= quantityToPurchase; // Resta la cantidad que se va a comprar
+//             console.log(item.stock);
+            
+//             await productModel.findByIdAndUpdate(
+//                 { '_id': new mongoose.Types.ObjectId(productId) },
+//                 { $set: { stock: item.stock } }
+//             );
+//         }
+        
+//         return true; // Al menos un producto tiene stock suficiente
+//     } catch(err) {
+//         console.log(err);
+//         return false;
+//     }
+// };
+purchaseCart = async (cartId) => {
+    try {
         // Obtén el carrito y su contenido
+        console.log("-----------------------------------------------");
         let id;
         let quantity;
-        const {products} = await cartModel.findById({ '_id': new mongoose.Types.ObjectId(cartId) }).lean().populate('products.product');
+        const outOfStockProductIds = [];
+        const inStockProducts = [];
+        const { products } = await cartModel.findById({ '_id': new mongoose.Types.ObjectId(cartId) }).lean().populate('products.product');
         console.log(products, "cart data");
-        const productIds = []; 
-        const productQuantitys = []; 
+        const productIds = [];
+        const productQuantitys = [];
+        
         for (const productItem of products) {
             const producto = productItem.product;
             quantity = productItem.quantity;
@@ -147,49 +277,94 @@ class Carts {
             id = producto._id.toString();
             productIds.push(id);
             productQuantitys.push(quantity);
-          }
-          console.log(productIds);
-          console.log(productQuantitys, "cantidad");
-          let canPurchase = true; // Variable para verificar si se puede comprar
+        }
         
-          for (let i = 0; i < productIds.length; i++) {
+        console.log(productIds);
+        console.log(productQuantitys, "cantidad");
+        
+        for (let i = 0; i < productIds.length; i++) {
             const productId = productIds[i];
             const quantityToPurchase = productQuantitys[i];
-    
+
             const item = await product.getProductById(productId);
             console.log(item, "productos");
-            
+
             if (item.stock < quantityToPurchase) {
-                canPurchase = false;
                 console.log("No hay suficiente stock para el producto:", item.title);
-                break; // Si un producto no tiene suficiente stock, no se puede comprar
+                outOfStockProductIds.push(productId);
+                console.log(outOfStockProductIds, "outofstock");
             } else {
                 console.log("Hay stock suficiente para el producto:", item.title);
-                
-                item.stock -= quantityToPurchase; // Resta la cantidad que se va a comprar
-                console.log(item.stock);
-                
-                await productModel.findByIdAndUpdate(
-                    { '_id': new mongoose.Types.ObjectId(productId) },
-                    { $set: { stock: item.stock } }
-                );
+                inStockProducts.push({
+                    product: item,
+                    quantityToPurchase
+                });
+                console.log(inStockProducts, "instockproducts");
             }
         }
-          return canPurchase;
-  } catch(err) {
-    console.log(err)
-}
-    }
 
-     calculateTotalAmount = async (products) => {
-      let totalAmount = 0;
-      for (const productItem of products) {
-          const product = productItem.product;
-          const quantity = productItem.quantity;
-          totalAmount += product.price * quantity;
-      }
-      return totalAmount;
-  };
+        if (inStockProducts.length === 0) {
+            return false; // Ningún producto tiene stock suficiente
+        }
+        
+        let totalAmount = 0;
+        const productsToRemoveFromCart = [];
+        
+        for (const inStockProduct of inStockProducts) {
+            const productId = inStockProduct.product._id.toString();
+            const quantityToPurchase = inStockProduct.quantityToPurchase;
+
+            const item = await product.getProductById(productId);
+            
+            item.stock -= quantityToPurchase; // Resta la cantidad que se va a comprar
+            totalAmount += item.price * quantityToPurchase; // Agrega al total amount
+            productsToRemoveFromCart.push(productId); // Agrega el producto al array de productos a remover del carrito
+          
+            console.log(item.stock);
+            
+            await productModel.findByIdAndUpdate(
+                { '_id': new mongoose.Types.ObjectId(productId) },
+                { $set: { stock: item.stock } }
+            );
+        }
+        
+        // Elimina los productos comprados del carrito
+        await cartModel.findByIdAndUpdate(
+            { '_id': new mongoose.Types.ObjectId(cartId) },
+            { $pull: { products: { product: { $in: productsToRemoveFromCart } } } }
+        );
+        
+        // Actualiza el total amount del carrito si es necesario
+        await cartModel.findByIdAndUpdate(
+            { '_id': new mongoose.Types.ObjectId(cartId) },
+            { $set: { totalAmount } }
+        );
+          console.log(totalAmount, "totalamount");
+          console.log(inStockProducts, "instockproducts");
+        return inStockProducts; // Al menos un producto tiene stock suficiente y se realizó la compra
+    } catch(err) {
+        console.log(err);
+        return false;
+    }
+};
+
+
+
+
+
+
+
+
+calculateTotalAmount = async (inStockProducts) => {
+    console.log(inStockProducts, "isp");
+    let totalAmount = 0;
+    for (const inStockProduct of inStockProducts) {
+        const product = inStockProduct.product;
+        const quantity = inStockProduct.quantityToPurchase;
+        totalAmount += product.price * quantity;
+    }
+    return totalAmount;
+};
 
    generateUniqueCode = async () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -204,16 +379,16 @@ class Carts {
     return code;
 };
 
-    purchaseCartWithTicket = async (cartId, userEmail) => {
+    purchaseCartWithTicket = async (cartId, userEmail, inStockProducts) => {
       try {
-          const canPurchase = await this.purchaseCart(cartId);
-  
-          if (canPurchase) {
+        //   const canPurchase = await this.purchaseCart(cartId);
+          const inStockProducts = await this.purchaseCart(cartId);
+          if (inStockProducts && inStockProducts.length > 0) {
               // Resta el stock y otras operaciones de compra aquí
   
               // Crear el ticket
               const cartData = await cartModel.findById(cartId).populate('products.product');
-              const totalAmount = await this.calculateTotalAmount(cartData.products);
+              const totalAmount = await this.calculateTotalAmount(inStockProducts);
               // const totalAmount = 10;
               const ticket = new ticketModel({
                   code: await this.generateUniqueCode(), // Implementar la función para generar códigos únicos
