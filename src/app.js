@@ -16,6 +16,11 @@ import { store } from "./utils.js";
 import sessionRoutes from "./routes/sessions.routes.js";
 import cartsRouter from "./routes/carts.routes.js";
 import usersRouter from "./routes/user.routes.js";
+// import mockRouter from "./routes/mocking.routes.js";
+import compression from "express-compression";
+import CustomError from "./dao/services/customError.js";
+import errorsDict from "./dictionary.js";
+import { addLogger } from "./dao/services/logger.service.js";
 
 
 // EXPRESS Y SOCKET.IO
@@ -31,9 +36,16 @@ const io = new Server(httpServer, {
         credentials: false
     }
 });
-
+server.use(compression({
+    brotli: {enabled: true, zlib :{}}
+})); // lo dejo general pero evaluar conveniencia.
 server.use(express.json());
 server.use(express.urlencoded({ extended: true}));
+server.use(addLogger);
+
+// server.get("/pepe", (req, res) =>{
+// req.logger.warn("alerta prueba")
+// })
 
 // SESIONES
 
@@ -57,6 +69,7 @@ server.use("/", routerViews(store));
 server.use("/api", cartsRouter);
 server.use("/api", usersRouter)
 server.use("/api/sessions", sessionRoutes());
+// server.use("/api",mockRouter )
 
 // PLANTILLAS
 server.engine("handlebars", engine ({defaultLayout: "main", extname: ".handlebars"}));
@@ -64,6 +77,21 @@ server.set('view engine', 'handlebars');
 server.set('views', './views');
 // STATIC
 server.use('/public', express.static(`${__dirname}/public`));
+
+
+
+server.all('*', (req, res, next) => {
+    throw new CustomError(errorsDict.ROUTING_ERROR);
+});
+
+server.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).send({ status: 'ERR', payload: { msg: err.message } });
+});
+
+
+
+
 // EVENTOS SOCKET.IO
 
 

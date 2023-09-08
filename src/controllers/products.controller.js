@@ -1,20 +1,27 @@
 import factoryProduct from "../dao/services/factory.js";
+import CustomError from "../dao/services/customError.js";
+import errorsDict from "../dictionary.js";
+import { addLogger } from "../dao/services/logger.service.js";
 const product = new factoryProduct("../src/db/products.json");
+
+
 
 // AGREGAR PRODUCTOS
 
-export const addProducts = async (req, res) =>{
+export const addProducts = async (req, res, next) =>{
     try{
         await product.addProduct(req.body);
         const status = product.status;
         if(product.status === 1){
             res.status(200).send({ status: "Success", product});
         } else {
-            res.status(404).send({ status: "Error404", error: product.showStatusMsg});
+            throw new CustomError(errorsDict.INVALID_TYPE_ERROR);
         };
     } catch (err){
-        console.log(err);
-        res.status(500).send({ status: "Error500", error: err});
+        // res.status(500).send({ status: "Error500", error: err});
+        // req.logger.fatal("Prueba en producto")
+        req.logger.error(`${req.method} ${req.url} ${new Date().toLocaleTimeString()}`)
+        next(err);
     };
 };
 
@@ -39,6 +46,7 @@ export const getById = async (req, res) =>{
 
 export const getProducts = async (req, res) =>{
     const{limit, page, sort, category , status} = req.query;
+
     try{
         let products = await product.getProducts(limit, page, sort, category, status);
         res.status(200).send(products);
