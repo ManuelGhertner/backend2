@@ -18,15 +18,13 @@ export const addProducts = async (req, res, next) =>{
             throw new CustomError(errorsDict.INVALID_TYPE_ERROR);
         };
     } catch (err){
-        // res.status(500).send({ status: "Error500", error: err});
-        // req.logger.fatal("Prueba en producto")
         req.logger.error(`${req.method} ${req.url} ${new Date().toLocaleTimeString()}`)
         next(err);
     };
 };
 
 // OBTENER PRODUCTO POR ID
-
+ 
 export const getById = async (req, res) =>{
     try {
         const pid = req.params.pid;

@@ -21,10 +21,21 @@ import compression from "express-compression";
 import CustomError from "./dao/services/customError.js";
 import errorsDict from "./dictionary.js";
 import { addLogger } from "./dao/services/logger.service.js";
-
+import cluster from "cluster";
+import { cpus } from "os";
 
 // EXPRESS Y SOCKET.IO
 
+
+
+if(cluster.isPrimary){
+   for (let i = 0; i < cpus().length; i++) cluster.fork();
+   cluster.on("exit", (worker, code, signal) =>{
+    console.log(`Se cerro el worker ${worker.process.pid}`);
+    cluster.fork();
+   })
+} else {
+    
 const server = express();
 
 const httpServer = http.createServer(server);
@@ -36,73 +47,77 @@ const io = new Server(httpServer, {
         credentials: false
     }
 });
-server.use(compression({
-    brotli: {enabled: true, zlib :{}}
-})); // lo dejo general pero evaluar conveniencia.
-server.use(express.json());
-server.use(express.urlencoded({ extended: true}));
-server.use(addLogger);
-
-// server.get("/pepe", (req, res) =>{
-// req.logger.warn("alerta prueba")
-// })
-
-// SESIONES
-
-server.use (session({
-    store: store,
-    secret: config.COOKIE_SECRET,
-    resave: false,
-    saveUninitialized: false,
-}));
-
-// PASSPORT
-
-initializePassport();
-server.use(passport.initialize());
-server.use(passport.session());
-
-// ENDPOINTS
-
-server.use("/api", productsRouter);
-server.use("/", routerViews(store));
-server.use("/api", cartsRouter);
-server.use("/api", usersRouter)
-server.use("/api/sessions", sessionRoutes());
-// server.use("/api",mockRouter )
-
-// PLANTILLAS
-server.engine("handlebars", engine ({defaultLayout: "main", extname: ".handlebars"}));
-server.set('view engine', 'handlebars');
-server.set('views', './views');
-// STATIC
-server.use('/public', express.static(`${__dirname}/public`));
-
-
-
-server.all('*', (req, res, next) => {
-    throw new CustomError(errorsDict.ROUTING_ERROR);
-});
-
-server.use((err, req, res, next) => {
-    const statusCode = err.statusCode || 500;
-    res.status(statusCode).send({ status: 'ERR', payload: { msg: err.message } });
-});
-
-
-
-
-// EVENTOS SOCKET.IO
-
-
-
-// CONEXION SERVIDOR
-
-try {
-    // MongoSingleton.getInstance();
-    server.listen(config.PORT, () =>{
-        console.log(`Servidor iniciado en puerto: ${config.PORT}`);
+    server.use(compression({
+        brotli: {enabled: true, zlib :{}}
+    })); // lo dejo general pero evaluar conveniencia.
+    server.use(express.json());
+    server.use(express.urlencoded({ extended: true}));
+    server.use(addLogger);
+    
+    // server.get("/pepe", (req, res) =>{
+    // req.logger.warn("alerta prueba")
+    // })
+    
+    // SESIONES
+    
+    server.use (session({
+        store: store,
+        secret: config.COOKIE_SECRET,
+        resave: false,
+        saveUninitialized: false,
+    }));
+    
+    // PASSPORT
+    
+    initializePassport();
+    server.use(passport.initialize());
+    server.use(passport.session());
+    
+    // ENDPOINTS
+    
+    server.use("/api", productsRouter);
+    server.use("/", routerViews(store));
+    server.use("/api", cartsRouter);
+    server.use("/api", usersRouter)
+    server.use("/api/sessions", sessionRoutes());
+    // server.use("/api",mockRouter )
+    
+    // PLANTILLAS
+    server.engine("handlebars", engine ({defaultLayout: "main", extname: ".handlebars"}));
+    server.set('view engine', 'handlebars');
+    server.set('views', './views');
+    // STATIC
+    server.use('/public', express.static(`${__dirname}/public`));
+    
+    
+    
+    server.all('*', (req, res, next) => {
+        throw new CustomError(errorsDict.ROUTING_ERROR);
     });
-} catch (err){
-    console.log(err);
-};
+    
+    server.use((err, req, res, next) => {
+        const statusCode = err.statusCode || 500;
+        res.status(statusCode).send({ status: 'ERR', payload: { msg: err.message } });
+    });
+    
+    
+    
+    
+    // EVENTOS SOCKET.IO
+    
+    
+    
+    // CONEXION SERVIDOR
+    
+    try {
+        // MongoSingleton.getInstance();
+        server.listen(config.PORT, () =>{
+            console.log(`Servidor iniciado en puerto: ${config.PORT} (PID ${process.pid})`);
+        });
+    } catch (err){
+        console.log(err);
+    };
+}
+
+
+
