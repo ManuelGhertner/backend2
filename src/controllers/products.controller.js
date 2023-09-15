@@ -10,6 +10,9 @@ const product = new factoryProduct("../src/db/products.json");
 
 export const addProducts = async (req, res, next) =>{
     try{
+        const productData = req.body;
+        const loggedInUser = req.session.user;
+        productData.owner = loggedInUser.id;
         await product.addProduct(req.body);
         const status = product.status;
         if(product.status === 1){

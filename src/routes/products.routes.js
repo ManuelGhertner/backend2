@@ -1,11 +1,11 @@
 import { Router} from "express";
 import { addProducts, getById, getProducts, updateProduct, deleteProduct } from "../controllers/products.controller.js";
-import {validate, validateAdmin} from "../middlewares/validate.middleware.js"
+import {validate, validateAdmin, validatepPremiumOrAdmin} from "../middlewares/validate.middleware.js"
 const productsRouter = Router();
 
 // AGREGAR PRODUCTO
 
-productsRouter.post("/products", addProducts); //despues agregar admin
+productsRouter.post("/products", validatepPremiumOrAdmin, addProducts); //despues agregar admin
 
 productsRouter.get("/products/:pid([a-zA-Z0-9]+)", getById);
 

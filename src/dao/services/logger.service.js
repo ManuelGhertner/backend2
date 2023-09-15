@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import winston from 'winston';
 
 dotenv.config()
-console.log(process.env.MODE)
+// console.log(process.env.MODE)
 
 // Si lo deseamos, podemos habilitar nuestra propia escala de niveles de error,
 // con nombres y colores personalizados.

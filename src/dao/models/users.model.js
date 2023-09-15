@@ -22,7 +22,7 @@ const schema = new mongoose.Schema({
        default: [],
 
     },
-    role: { type: String, trim: true, default: "user", enum: ["user", "admin"] }
+    role: { type: String, trim: true, default: "user", enum: ["user", "admin", "premium"] }
 });
 
 const userModel = mongoose.model(collection, schema);

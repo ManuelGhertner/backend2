@@ -21,6 +21,7 @@ class ProductsDB {
 
 addProduct = async (product) =>{
     try{
+        
         const newProduct = await productModel.create(product);
         await newProduct.save();
         this.status = 1;

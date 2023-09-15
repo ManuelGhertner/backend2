@@ -16,5 +16,15 @@ const validateAdmin = async (req, res, next) => {
     }
 }
 
+// VALIDATE PREMIUM O ADMIN
 
-export { validate, validateAdmin };
+const validatepPremiumOrAdmin = async (req, res, next) => {
+    if (req.user.role==="admin" || req.user.role==="premium") {
+        next()
+    } else {
+        res.status(401).json("No autorizado");
+    }
+}
+
+
+export { validate, validateAdmin, validatepPremiumOrAdmin };

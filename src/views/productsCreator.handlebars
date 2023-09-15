@@ -1,0 +1,82 @@
+<section class="my-5">
+  <div class="container-fluid h-custom">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-md-9 col-lg-6 col-xl-5">
+        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+          class="img-fluid" alt="Sample image">
+      </div>
+      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+        <form action="http://localhost:3000/api/products" method="post">
+
+          <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start m-4">
+            <h1 class="fw-bold mb-5 mx-1 mx-md-4 mt-4">Agregar Producto</h1>
+          </div>
+
+          <!-- Title input -->
+          <div class="form-outline mb-4 mt-4">
+            <label class="form-label" for="title">Título</label>
+            <input type="text" id="title" name="title" required="required" class="form-control form-control-lg"
+              placeholder="Ingresa el título del producto" />
+          </div>
+
+          <!-- Description input -->
+          <div class="form-outline mb-4">
+            <label class="form-label" for="description">Descripción</label>
+            <textarea id="description" name="description" required="required" class="form-control form-control-lg"
+              placeholder="Ingresa la descripción del producto"></textarea>
+          </div>
+
+          <!-- Code input -->
+          <div class="form-outline mb-4">
+            <label class="form-label" for="code">Código</label>
+            <input type="text" id="code" name="code" required="required" class="form-control form-control-lg"
+              placeholder="Ingresa el código del producto" />
+          </div>
+
+          <!-- Price input -->
+          <div class="form-outline mb-4">
+            <label class="form-label" for="price">Precio</label>
+            <input type="number" id="price" name="price" required="required" class="form-control form-control-lg"
+              placeholder="Ingresa el precio del producto" />
+          </div>
+
+          <!-- Status input -->
+          {{!-- <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="status" name="status" checked>
+            <label class="form-check-label" for="status">
+              Disponible
+            </label>
+          </div> --}}
+
+          <!-- Stock input -->
+          <div class="form-outline mb-4">
+            <label class="form-label" for="stock">Stock</label>
+            <input type="number" id="stock" name="stock" required="required" class="form-control form-control-lg"
+              placeholder="Ingresa la cantidad en stock" />
+          </div>
+
+          <!-- Category input -->
+          <div class="form-outline mb-4">
+            <label class="form-label" for="category">Categoría</label>
+            <input type="text" id="category" name="category" required="required" class="form-control form-control-lg"
+              placeholder="Ingresa la categoría del producto" />
+          </div>
+
+          <!-- Thumbnail input -->
+          <div class="form-file mb-4">
+            <input type="file" class="form-file-input" id="thumbnail" name="thumbnail" accept="image/*">
+            <label class="form-file-label" for="thumbnail">
+              <span class="form-file-text">Seleccionar una imagen...</span>
+              <span class="form-file-button">Examinar</span>
+            </label>
+          </div>
+
+          <div class="text-center text-lg-start mt-4 pt-2">
+            <input type="submit" id="addProduct" class="btn btn-primary btn-lg"
+              style="padding-left: 2.5rem; padding-right: 2.5rem;" value="Agregar Producto">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

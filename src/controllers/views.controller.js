@@ -15,6 +15,12 @@ export const realTimeProducts = async (req, res) => {
     res.render('realTimeProducts', { products: currentProducts });
 };
 
+// AGREGAR PRODUCTOS
+
+export const addProducts = async (req, res) =>{
+    res.render("productsCreator");
+}
+
 // REGISTRO
 export const register = async (req, res) => {
     if(req.session.userValidated === true ) {
