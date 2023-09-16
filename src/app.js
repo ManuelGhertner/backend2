@@ -24,6 +24,8 @@ import { addLogger } from "./dao/services/logger.service.js";
 import cluster from "cluster";
 import { cpus } from "os";
 
+import methodOverride from "method-override";
+
 // EXPRESS Y SOCKET.IO
 
 
@@ -74,7 +76,7 @@ const io = new Server(httpServer, {
     server.use(passport.session());
     
     // ENDPOINTS
-    
+    server.use(methodOverride("_method"));
     server.use("/api", productsRouter);
     server.use("/", routerViews(store));
     server.use("/api", cartsRouter);

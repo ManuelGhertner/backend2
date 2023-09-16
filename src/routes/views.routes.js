@@ -1,4 +1,4 @@
-import { realTimeProducts, profile, register, login, verifySession, logout, cart, addProducts } from "../controllers/views.controller.js";
+import { realTimeProducts, profile, register, login, verifySession, logout, cart, addProducts, getProducts, getAllProducts } from "../controllers/views.controller.js";
 import { Router } from "express";
 import passport from "passport";
 import {validate, validateAdmin, validatepPremiumOrAdmin} from "../middlewares/validate.middleware.js"
@@ -8,6 +8,10 @@ const routerViews = () =>{
 
 //REALTIMEPRODUCTS
     router.get('/realtimeproducts', realTimeProducts);
+    router.get("/productsowned", validatepPremiumOrAdmin, getProducts)
+    router.get("/allproductsdb",validateAdmin, getAllProducts)
+
+
 
 //AGREGAR PRODUCTO
     router.get("/products",validatepPremiumOrAdmin, addProducts)

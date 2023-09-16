@@ -21,6 +21,43 @@ export const addProducts = async (req, res) =>{
     res.render("productsCreator");
 }
 
+// PRODUCTOS DE USUARIO
+
+// export const getProducts = async (req, res) =>{
+//     const currentProducts = await productModel.find().lean()
+//     res.render("productsOwned", { products: currentProducts });
+// }
+
+export const getProducts = async (req, res) => {
+    try {
+      const loggedInUser = req.session.user; // Obtén el usuario de la sesión
+      if (!loggedInUser) {
+        // Si no hay usuario logueado, muestra un mensaje de error o redirige a la página de inicio de sesión
+        return res.status(401).send("Debes iniciar sesión para acceder a tus productos.");
+      }
+  
+      // Consulta los productos que pertenecen al usuario logueado por su ID de propietario
+      const currentProducts = await productModel.find({ owner: loggedInUser.id }).lean();
+  
+      res.render("productsOwned", { products: currentProducts });
+    } catch (error) {
+      res.status(500).send("Error al obtener tus productos.");
+    }
+  };
+
+  //OBTENER TODOS LOS PRODUCTOS
+
+  export const getAllProducts = async (req, res) => {
+    try {
+      // Consulta todos los productos en la base de datos
+      const allProducts = await productModel.find().lean();
+  
+      res.render("productsOwned", { products: allProducts }); // Cambia "allProducts" al nombre de tu vista Handlebars
+    } catch (error) {
+      res.status(500).send("Error al obtener todos los productos.");
+    }
+  };
+
 // REGISTRO
 export const register = async (req, res) => {
     if(req.session.userValidated === true ) {

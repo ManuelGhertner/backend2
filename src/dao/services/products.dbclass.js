@@ -62,8 +62,8 @@ getProducts = async(limit, page, sort, category, status) =>{
     };
     try {
         let products = await productModel.paginate(query, data);
-        let prevLink = `http://localhost:8000/api/products/?page=${products.prevPage}&limit=${products.limit}&sort=${sort}` || null
-        let nextLink = `http://localhost:8000/api/products/?page=${products.nextPage}&limit=${products.limit}&sort=${sort}` || null
+        let prevLink = `http://localhost:3000/api/products/?page=${products.prevPage}&limit=${products.limit}&sort=${sort}` || null
+        let nextLink = `http://localhost:3000/api/products/?page=${products.nextPage}&limit=${products.limit}&sort=${sort}` || null
 
         const productFind = () => {
             if(Boolean(products.docs)) {
@@ -90,6 +90,62 @@ getProducts = async(limit, page, sort, category, status) =>{
         return err;
     }
 };
+
+// OBTENER PRODUCTOS CREADOS POR USUARIO 
+
+getProductsByOwner = async (limit, page, sort, category, status, ownerId) => {
+    let data = {
+      limit: limit || 3,
+      page: page || 1,
+      sort: sort === "asc" ? { price: 1 } : "" || sort === "desc" ? { price: -1 } : "",
+      lean: true,
+    };
+  
+    let query = {};
+  
+    if (category) {
+      query.category = category;
+    }
+  
+    if (status) {
+      query.status = status;
+    }
+  
+    // Agrega el filtro para el propietario (owner)
+    if (ownerId) {
+      query.owner = ownerId;
+    }
+  
+    try {
+      let products = await productModel.paginate(query, data);
+      let prevLink = `http://localhost:3000/api/products/?page=${products.prevPage}&limit=${products.limit}&sort=${sort}` || null;
+      let nextLink = `http://localhost:3000/api/products/?page=${products.nextPage}&limit=${products.limit}&sort=${sort}` || null;
+  
+      const productFind = () => {
+        if (Boolean(products.docs)) {
+          return "success";
+        } else {
+          return "error";
+        }
+      };
+  
+      return {
+        status: productFind(),
+        payload: products.docs,
+        totalDocs: products.totalDocs,
+        limit: products.limit,
+        totalPages: products.totalPages,
+        page: products.page,
+        pagingCounter: products.pagingCounter,
+        hasPrevPage: products.hasPrevPage,
+        hasNextPage: products.hasNextPage,
+        prevLink: prevLink,
+        nextLink: nextLink,
+      };
+    } catch (err) {
+      return err;
+    }
+  };
 
 // ACTUALIZAR PRODUCTO
 updateProduct = async(id, object) =>{

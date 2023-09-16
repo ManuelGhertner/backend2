@@ -56,6 +56,26 @@ export const getProducts = async (req, res) =>{
     };
 };
 
+
+// OBTENER PRODUCTOS CREADOS POR EL USUARIO
+
+export const getProductsFromUser = async (req, res) => {
+    const { limit, page, sort, category, status } = req.query;
+    const loggedInUser = req.session.user; // Obtén el usuario de la sesión
+  
+    try {
+      if (loggedInUser) {
+        // Si hay un usuario logueado
+        let products = await product.getProductsByOwner(limit, page, sort, category, status, loggedInUser.id);
+        res.status(200).send(products);
+      } else {
+        // Si no hay un usuario logueado
+        res.status(401).send("Debes iniciar sesión para acceder a esta función.");
+      }
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  };
 // ACTUALIZAR PRODUCTOS
 
 export const updateProduct = async (req, res) => {
@@ -80,8 +100,8 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) =>{
     try{
-        const pid = req.params.pid;
-        await product.deleteProduct(pid);
+        const id = req.params.id;
+        await product.deleteProduct(id);
         res.status(200).send({ status: "OK", msg: "Producto eliminado"});
     } catch (err){
         res.status(500).send({ status: "Error", error: err})

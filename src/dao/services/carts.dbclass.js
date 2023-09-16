@@ -87,32 +87,69 @@ class Carts {
     }
 };
 
-    addProductToCart = async(cartId, productId) => {
-        try {
-            let cart = await cartModel.findOne({ '_id': new mongoose.Types.ObjectId(cartId) });
-            let productsInCart = cart.products;
-            let index = productsInCart.findIndex((p) => p.product._id == productId );
-            let obj = productsInCart[index]
+    // addProductToCart = async(cartId, productId) => {
+    //     try {
+    //         let cart = await cartModel.findOne({ '_id': new mongoose.Types.ObjectId(cartId) });
+    //         let productsInCart = cart.products;
+    //         let index = productsInCart.findIndex((p) => p.product._id == productId );
+    //         let obj = productsInCart[index]
 
-            if(index >= 0) {
-                obj.quantity++
-                productsInCart[index] = obj
-                let result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { products: productsInCart });
-                return result;
+    //         if(index >= 0) {
+    //             obj.quantity++
+    //             productsInCart[index] = obj
+    //             let result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { products: productsInCart });
+    //             return result;
 
-            } else {
-                let newObj = {
-                    product: productId,
-                    quantity: 1
-                };
+    //         } else {
+    //             let newObj = {
+    //                 product: productId,
+    //                 quantity: 1
+    //             };
                 
-                let result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, {$push:{"products":newObj}});
-                return result;
-            }
-        } catch(err) {
-            return err;
+    //             let result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, {$push:{"products":newObj}});
+    //             return result;
+    //         }
+    //     } catch(err) {
+    //         return err;
+    //     }
+    // }
+
+    addProductToCart = async (cartId, productId, userId) => {
+        try {
+          // Obtén el carrito del usuario
+          const cart = await cartModel.findOne({ '_id': new mongoose.Types.ObjectId(cartId) });
+          const productsInCart = cart.products;
+      
+          // Verifica si el usuario es el propietario del producto
+          const isOwner = await productModel.exists({ _id: new mongoose.Types.ObjectId(productId), owner: userId });
+      
+          if (isOwner) {
+            // Si el usuario es propietario, no permitas agregarlo al carrito
+            return { status: "Error", message: "No puedes agregar tu propio producto al carrito." };
+          }
+      
+          // Verifica si el producto ya está en el carrito
+          const index = productsInCart.findIndex((p) => p.product._id == productId);
+          const obj = productsInCart[index];
+      
+          if (index >= 0) {
+            obj.quantity++;
+            productsInCart[index] = obj;
+            const result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { products: productsInCart });
+            return { status: "Success", message: "Producto agregado al carrito." };
+          } else {
+            const newObj = {
+              product: productId,
+              quantity: 1,
+            };
+      
+            const result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { $push: { "products": newObj } });
+            return { status: "Success", message: "Producto agregado al carrito." };
+          }
+        } catch (err) {
+          return { status: "Error", message: "Error al agregar el producto al carrito." };
         }
-    }
+      };
 
         deleteCart = async(cartId) => {
           try {
