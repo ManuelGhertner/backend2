@@ -1,4 +1,4 @@
-import { addProductToCart, createCart, getCarts, deleteCart, getCartById, getCartByUserId, purchaseCart } from "../controllers/carts.controller.js"
+import { addProductToCart, createCart, getCarts, deleteCart, getCartById, getCartByUserId, purchaseCart, createCartAndAddProduct } from "../controllers/carts.controller.js"
 import { validate, validateAdmin } from "../middlewares/validate.middleware.js";
 
 import { Router } from "express";
@@ -6,7 +6,7 @@ import { Router } from "express";
 const cartsRouter = Router();
 
 //POST - Crear carrito.
-cartsRouter.post("/carts", createCart, validate);
+cartsRouter.post("/carts",createCart , validate);
 
 // GET - Listar todos los carritos.
 cartsRouter.get("/carts",  getCarts);
@@ -17,7 +17,7 @@ cartsRouter.get("/carts/:cid",  getCartByUserId);
 
 //POST - Agregar producto al carrito.
 cartsRouter.post("/carts/:cid/product/:pid",  addProductToCart);  
-
+cartsRouter.post("/carts/:pid", createCartAndAddProduct);
 // //DELETE - Borrar carrito.
 cartsRouter.delete("/cartdelete/:cid",  deleteCart);
 

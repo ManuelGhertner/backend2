@@ -87,69 +87,151 @@ class Carts {
     }
 };
 
-    // addProductToCart = async(cartId, productId) => {
-    //     try {
-    //         let cart = await cartModel.findOne({ '_id': new mongoose.Types.ObjectId(cartId) });
-    //         let productsInCart = cart.products;
-    //         let index = productsInCart.findIndex((p) => p.product._id == productId );
-    //         let obj = productsInCart[index]
-
-    //         if(index >= 0) {
-    //             obj.quantity++
-    //             productsInCart[index] = obj
-    //             let result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { products: productsInCart });
-    //             return result;
-
-    //         } else {
-    //             let newObj = {
-    //                 product: productId,
-    //                 quantity: 1
-    //             };
-                
-    //             let result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, {$push:{"products":newObj}});
-    //             return result;
-    //         }
-    //     } catch(err) {
-    //         return err;
-    //     }
-    // }
-
-    addProductToCart = async (cartId, productId, userId) => {
+    addProductToCart = async(cartId, productId) => {
         try {
-          // Obtén el carrito del usuario
-          const cart = await cartModel.findOne({ '_id': new mongoose.Types.ObjectId(cartId) });
-          const productsInCart = cart.products;
-      
-          // Verifica si el usuario es el propietario del producto
-          const isOwner = await productModel.exists({ _id: new mongoose.Types.ObjectId(productId), owner: userId });
-      
-          if (isOwner) {
-            // Si el usuario es propietario, no permitas agregarlo al carrito
-            return { status: "Error", message: "No puedes agregar tu propio producto al carrito." };
-          }
-      
-          // Verifica si el producto ya está en el carrito
-          const index = productsInCart.findIndex((p) => p.product._id == productId);
-          const obj = productsInCart[index];
-      
-          if (index >= 0) {
-            obj.quantity++;
-            productsInCart[index] = obj;
-            const result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { products: productsInCart });
-            return { status: "Success", message: "Producto agregado al carrito." };
-          } else {
-            const newObj = {
-              product: productId,
-              quantity: 1,
-            };
-      
-            const result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { $push: { "products": newObj } });
-            return { status: "Success", message: "Producto agregado al carrito." };
-          }
-        } catch (err) {
-          return { status: "Error", message: "Error al agregar el producto al carrito." };
+            let cart = await cartModel.findOne({ '_id': new mongoose.Types.ObjectId(cartId) });
+            let productsInCart = cart.products;
+            let index = productsInCart.findIndex((p) => p.product._id == productId );
+            let obj = productsInCart[index]
+
+            if(index >= 0) {
+                obj.quantity++
+                productsInCart[index] = obj
+                let result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { products: productsInCart });
+                return result;
+
+            } else {
+                let newObj = {
+                    product: productId,
+                    quantity: 1
+                };
+                
+                let result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, {$push:{"products":newObj}});
+                return result;
+            }
+        } catch(err) {
+            return err;
         }
-      };
+    }
+
+    createCartAndAddProduct = async (userId, productId) => {
+        try {
+            // Verificar si el usuario ya tiene un carrito
+            const existingCart = await Carts.getCartByUserId(userId);
+    
+            if (!existingCart) {
+                // Si no existe un carrito, crea uno nuevo y agrégale el producto
+                const newCart = {
+                    userId,
+                    products: [{ product: productId, quantity: 1 }] // Agrega el primer producto al carrito
+                };
+                await Carts.addCart(newCart); // Supongamos que tienes una función para agregar un carrito
+    
+                return { success: true, message: "Carrito creado y producto agregado con éxito." };
+            } else {
+                // Si ya tiene un carrito, verifica si el producto ya está en el carrito
+                const productInCart = existingCart.products.find(item => item.product == productId);
+    
+                if (productInCart) {
+                    // Si el producto ya está en el carrito, aumenta la cantidad
+                    productInCart.quantity++;
+                } else {
+                    // Si el producto no está en el carrito, agrégalo
+                    existingCart.products.push({ product: productId, quantity: 1 });
+                }
+    
+                await Carts.updateCart(existingCart); // Supongamos que tienes una función para actualizar el carrito
+    
+                return { success: true, message: "Producto agregado al carrito con éxito." };
+            }
+        } catch (err) {
+            return { success: false, message: err.message };
+        }
+    };
+
+
+    
+
+    // addProductToCart = async (cartId, productId, userId) => {
+    //     try {
+    //       // Obtén el carrito del usuario
+    //       const cart = await cartModel.findOne({ '_id': new mongoose.Types.ObjectId(cartId) });
+    //       const productsInCart = cart.products;
+      
+    //       // Verifica si el usuario es el propietario del producto
+    //       const isOwner = await productModel.exists({ _id: new mongoose.Types.ObjectId(productId), owner: userId });
+      
+    //       if (isOwner) {
+    //         // Si el usuario es propietario, no permitas agregarlo al carrito
+    //         return { status: "Error", message: "No puedes agregar tu propio producto al carrito." };
+    //       }
+      
+    //       // Verifica si el producto ya está en el carrito
+    //       const index = productsInCart.findIndex((p) => p.product._id == productId);
+    //       const obj = productsInCart[index];
+      
+    //       if (index >= 0) {
+    //         obj.quantity++;
+    //         productsInCart[index] = obj;
+    //         const result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { products: productsInCart });
+    //         return { status: "Success", message: "Producto agregado al carrito." };
+    //       } else {
+    //         const newObj = {
+    //           product: productId,
+    //           quantity: 1,
+    //         };
+      
+    //         const result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { $push: { "products": newObj } });
+    //         return { status: "Success", message: "Producto agregado al carrito." };
+    //       }
+    //     } catch (err) {
+    //       return { status: "Error", message: "Error al agregar el producto al carrito." };
+    //     }
+    //   };
+
+    // addProductToCart = async (cartId, productId, userId) => {
+    //     try {
+    //       // Busca el carrito por ID
+    //       let cart = await cartModel.findOne({ '_id': new mongoose.Types.ObjectId(cartId) });
+    
+    //       // Si no existe un carrito con el ID proporcionado, crea uno nuevo
+    //       if (!cart) {
+    //         cart = await cartModel.create({ _id: cartId, products: [], email: '' });
+    //       }
+    
+    //       const productsInCart = cart.products;
+    
+    //     //   // Verifica si el usuario es el propietario del producto
+    //     //   const isOwner = await productModel.exists({ _id: new mongoose.Types.ObjectId(productId), owner: userId });
+    
+    //     //   if (isOwner) {
+    //     //     // Si el usuario es propietario, no permitas agregarlo al carrito
+    //     //     return { status: "Error", message: "No puedes agregar tu propio producto al carrito." };
+    //     //   }
+    
+    //       // Verifica si el producto ya está en el carrito
+    //       const index = productsInCart.findIndex((p) => p.product._id == productId);
+    //       const obj = productsInCart[index];
+    
+    //       if (index >= 0) {
+    //         obj.quantity++;
+    //         productsInCart[index] = obj;
+    //       } else {
+    //         const newObj = {
+    //           product: productId,
+    //           quantity: 1,
+    //         };
+    //         productsInCart.push(newObj);
+    //       }
+    
+    //       // Actualiza el carrito con los productos agregados
+    //       const result = await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { $push: { "products": newObj } });
+    
+    //       return { status: "Success", message: "Producto agregado al carrito." };
+    //     } catch (err) {
+    //       return { status: "Error", message: "Error al agregar el producto al carrito." };
+    //     }
+    //   };
 
         deleteCart = async(cartId) => {
           try {

@@ -27,7 +27,14 @@
                         <p class="card-text"><b>Precio: </b> ${{this.price}}</p>
                         <p class="card-text"><b>Descripción: </b> {{this.description}}</p>
                         <a class="btn btn-info my-3" href="/products/{{this._id}}">DETALLE</a>
-                        <button type="button" class="btn btn-info button-add-cart" onclick="buttonAdd()" pid="{{this._id}}">AÑADIR A CARRITO</button>
+                        <form action="/api/carts/{{this._id}}" method="POST">
+                        <input type="hidden" name="productId" value="{{this._id}}">
+    <button type="submit" class="btn btn-sucess m-2">
+        <i class="fas fa-sign-out-alt"></i>AÑADIR AL CARRITO
+    </button>
+</form>
+                        {{!-- <a href="/api/carts" class="btn btn-success m-2"><i class="fas fa-sign-out-alt"></i>AÑADIR A CARRITO</a> --}}
+                        {{!-- <button type="button" class="btn btn-info button-add-cart" onclick="buttonAdd()" pid="{{this._id}}">AÑADIR A CARRITO</button> --}}
                     </div>
                 </div>
             </div>

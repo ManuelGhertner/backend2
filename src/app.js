@@ -23,8 +23,10 @@ import errorsDict from "./dictionary.js";
 import { addLogger } from "./dao/services/logger.service.js";
 import cluster from "cluster";
 import { cpus } from "os";
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
 
-import methodOverride from "method-override";
+// import methodOverride from "method-override";
 
 // EXPRESS Y SOCKET.IO
 
@@ -41,6 +43,18 @@ if(cluster.isPrimary){
 const server = express();
 
 const httpServer = http.createServer(server);
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación APIS',
+            description: 'Esta documentación cubre toda la API'
+        }
+    },
+    apis: ['./docs/**/*.yaml'] // todos los archivos de configuración de rutas estarán aquí
+}
+const specs = swaggerJsdoc(swaggerOptions);
 
 const io = new Server(httpServer, {
     cors : {
@@ -76,12 +90,13 @@ const io = new Server(httpServer, {
     server.use(passport.session());
     
     // ENDPOINTS
-    server.use(methodOverride("_method"));
+    // server.use(methodOverride("_method"));
     server.use("/api", productsRouter);
     server.use("/", routerViews(store));
     server.use("/api", cartsRouter);
     server.use("/api", usersRouter)
     server.use("/api/sessions", sessionRoutes());
+    server.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
     // server.use("/api",mockRouter )
     
     // PLANTILLAS

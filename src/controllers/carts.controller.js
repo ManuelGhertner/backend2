@@ -37,6 +37,43 @@ export const addProductToCart = async(req, res) => {
     }
 };
 
+
+export const createCartAndAddProduct = async (req, res) => {
+    try {
+        const { pid } = req.params; // Obtener el ID del producto desde los parámetros
+        // const userId = req.user._id; // Supongamos que tienes información del usuario en req.user
+
+        const result = await createCartAndAddProduct( pid);
+
+        if (result) {
+            res.status(200).send({ message: result.message });
+        } else {
+            res.status(500).send({ status: "error!!", message: result.message });
+        }
+    } catch (err) {
+        res.status(500).send({ status: "errorrrr", message: err.message });
+    }
+};
+
+// export const addProductToCart = async(req, res) => {
+//     try {
+//         const { cid } = req.params; // Obtén el ID del carrito desde los parámetros de la URL
+//         const { productId } = req.body; // Obtén el ID del producto desde el cuerpo de la solicitud
+//         console.log(productId);
+//         console.log("hola");
+//         // Llama a la función para agregar el producto al carrito
+//         const result = await cart.addProductToCart(cid, productId);
+
+//         if (result.status === "Success") {
+//             res.status(200).send({ status: "ok", message: "Producto agregado al carrito" });
+//         } else {
+//             res.status(400).send({ status: "error", message: result.message });
+//         }
+//     } catch(err) {
+//         res.status(500).send({ status: "error", message: err.message });
+//     }
+// };
+
 // Borrar carrito.
 export const deleteCart = async(req, res) => {
     const { cid } = req.params;
