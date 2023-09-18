@@ -49,7 +49,7 @@ const swaggerOptions = {
         openapi: '3.0.1',
         info: {
             title: 'Documentación APIS',
-            description: 'Esta documentación cubre toda la API'
+            description: 'Esta documentación cubre las APIS de Products y Carts'
         }
     },
     apis: ['./docs/**/*.yaml'] // todos los archivos de configuración de rutas estarán aquí

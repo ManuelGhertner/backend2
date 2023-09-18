@@ -5,27 +5,14 @@ import { Router } from "express";
 
 const cartsRouter = Router();
 
-//POST - Crear carrito.
 cartsRouter.post("/carts",createCart , validate);
-
-// GET - Listar todos los carritos.
 cartsRouter.get("/carts",  getCarts);
-
-// GET - Listar carritos por ID.
-
 cartsRouter.get("/carts/:cid",  getCartByUserId);
-
-//POST - Agregar producto al carrito.
 cartsRouter.post("/carts/:cid/product/:pid",  addProductToCart);  
 cartsRouter.post("/carts/:pid", createCartAndAddProduct);
-// //DELETE - Borrar carrito.
 cartsRouter.delete("/cartdelete/:cid",  deleteCart);
-
-
-//POST - Agregar compra.
-
 cartsRouter.post('/carts/:cid/purchase', purchaseCart);
-
+cartsRouter.get("/carts/:cid",  getCartById);
 // //DELETE - Borrar producto del carrito.
 // cartsRouter.delete("/carts/:cid/product/:pid",  deleteProduct);
 
@@ -36,7 +23,7 @@ cartsRouter.post('/carts/:cid/purchase', purchaseCart);
 // cartsRouter.delete("/carts/:cid", deleteAllProducts);
 
 // //GET - Obtener un carrito por id.
-cartsRouter.get("/carts/:cid",  getCartById);
+
 
 
 // cartsRouter.get("*", async (req, res) =>{

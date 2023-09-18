@@ -100,8 +100,8 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) =>{
     try{
-        const id = req.params.id;
-        await product.deleteProduct(id);
+        const pid = req.params.pid;
+        await product.deleteProduct(pid);
         res.status(200).send({ status: "OK", msg: "Producto eliminado"});
     } catch (err){
         res.status(500).send({ status: "Error", error: err})
