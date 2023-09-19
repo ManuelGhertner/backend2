@@ -1,18 +1,39 @@
 import Carts from "../dao/services/carts.dbclass.js";
 import ProductsDB from "../dao/services/products.dbclass.js";
+import Users from "../dao/services/users.dbclass.js";
 
 const cart = new Carts();
 const product = new ProductsDB();
+const usuario = new Users();
 
 // Crear carrito.
 export const createCart = async(req, res) => {
     try {
-        const data = await cart.addCart(req.body);
-        res.status(200).send({ status:  "ok",  message: `Carrito creado`, data  });
-    } catch(err) {
-        res.status(500).send({ status: "error", message: err.message });
-    }
+    //     const data = await cart.addCart(req.body);
+    //     res.status(200).send({ status:  "ok",  message: `Carrito creado`, data  });
+    // } catch(err) {
+    //     res.status(500).send({ status: "error", message: err.message });
+    // }
+    
+// Obtén el ID del usuario loggeado (asumiendo que está en req.session.user.id)
+const userId = req.session.user.id;
+
+// Llama a la función addCart del servicio de carritos con el ID del usuario
+const result = await cart.addCart(userId);
+console.log(userId);
+if (userId) {
+    // Carrito creado con éxito
+    res.status(200).send({ status: "ok", message: "Carrito creado"});
+} else {
+    // Error al crear el carrito
+    res.status(500).send({ status: "error", message: result.statusMsg });
+}
+} catch (err) {
+res.status(500).send({ status: "error", message: err.message });
 };
+    }
+
+
 
 // Obtener carritos.
 export const getCarts = async(req, res) => {
@@ -25,35 +46,93 @@ export const getCarts = async(req, res) => {
 };
 
 // Agregar producto al carrito.
-export const addProductToCart = async(req, res) => {
-    try {
-        const { cid, pid } = req.params;
+// export const addProductToCart = async(req, res) => {
+//     try {
+//         const { cid, pid } = req.params;
   
-        cart.addProductToCart(cid, pid);//agrego el producto al carrito.;
-        res.status(200).send({ status: "ok", message: "Producto agregado al carrito" });
+//         cart.addProductToCart(cid, pid);//agrego el producto al carrito.;
+//         res.status(200).send({ status: "ok", message: "Producto agregado al carrito" });
 
-    } catch(err) {
+//     } catch(err) {
+//         res.status(500).send({ status: "error", message: err.message });
+//     }
+// };
+
+export const addProductToCart = async (req, res) => {
+    try {
+        const { pid } = req.params; // Obtén el ID del producto desde los parámetros
+        const loggedInUser = req.session.user; // Obtén el usuario logueado
+console.log(loggedInUser.id);
+const user = await usuario.getUsersById(loggedInUser.id)
+console.log(user.cart[0].carts);
+const idHex = user.cart[0].carts._id.toString();
+console.log(idHex);
+        // Asegúrate de que el usuario tenga un carrito asignado
+        if (!idHex) {
+            return res.status(500).send({ status: "error", message: "El usuario no tiene un carrito asignado." });
+        }
+
+        // // Obtén el ID del carrito del usuario
+        // const cartId = loggedInUser.cart._id;
+
+        // Llama a la función que agrega el producto al carrito usando cartId
+        const result = await cart.addProductToCart(idHex, pid);
+
+        if (result.success) {
+            res.status(200).send({ status: "ok", message: "Producto agregado al carrito con éxito." });
+        } else {
+            res.status(500).send({ status: "error", message: result.message });
+        }
+    } catch (err) {
         res.status(500).send({ status: "error", message: err.message });
     }
 };
 
+// export const createCartAndAddProduct = async (req, res) => {
+//     try {
+//         const { productId } = req.body; // Asegúrate de que esta propiedad coincida con la que esperas en la solicitud
 
-export const createCartAndAddProduct = async (req, res) => {
-    try {
-        const { pid } = req.params; // Obtener el ID del producto desde los parámetros
-        // const userId = req.user._id; // Supongamos que tienes información del usuario en req.user
+//         // Verifica si el producto existe
+//         const producto = await product.findById(productId);
+//         if (!producto) {
+//             return res.status(404).send({ status: "error", message: "El producto no existe." });
+//         }
 
-        const result = await createCartAndAddProduct( pid);
+//         // Crea un objeto de carrito con el producto
+//         const cart = {
+//             userId: req.session.user.id, // Supongamos que puedes obtener el ID del usuario de la sesión
+//             products: [{ producto: productId, quantity: 1 }]
+//         };
 
-        if (result) {
-            res.status(200).send({ message: result.message });
-        } else {
-            res.status(500).send({ status: "error!!", message: result.message });
-        }
-    } catch (err) {
-        res.status(500).send({ status: "errorrrr", message: err.message });
-    }
-};
+//         // Llama a la función para crear un carrito y agregar el producto
+//         await cart.addCartAndAddProduct(cart, productId);
+
+//         res.status(200).send({ status: "ok", message: "Carrito creado y producto agregado con éxito." });
+//     } catch (err) {
+//         res.status(500).send({ status: "error", message: err.message });
+//     }
+// };
+
+
+
+
+// export const createCartAndAddProduct = async (req, res) => {
+//     try {
+//         const { pid } = req.params; 
+//         const loggedInUser = req.session.user;// Obtener el ID del producto desde los parámetros
+//         // const userId = req.user._id; // Supongamos que tienes información del usuario en req.user
+
+//         const result = await createCartAndAddProduct(pid, loggedInUser.id);
+
+//         if (result) {
+//             res.status(200).send({ message: "Exitoso" });
+//         } else {
+//             res.status(500).send({ status: "error!!", message: result.message });
+//         }
+//     } catch (err) {
+//         res.status(500).send({ status: "errorrrr", message: err.message });
+//     }
+// };
 
 // export const addProductToCart = async(req, res) => {
 //     try {

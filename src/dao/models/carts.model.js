@@ -24,6 +24,10 @@ const cartSchema = new mongoose.Schema({
     email: {
         type: String,
         trim: true
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
     }
 }, schemaOptions);
 

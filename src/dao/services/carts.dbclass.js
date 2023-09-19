@@ -22,21 +22,99 @@ class Carts {
         return Object.keys(obj).length === 0;
       };
 
-      addCart = async(cart) =>{
+      addCart = async(userId) =>{
         try{
-            if (!Carts.#objEmpty(cart)) {
-                await cartModel.create({ ...cart, id: Carts.idUnico });
+            // if (!Carts.#objEmpty(cart)) {
+                // await cartModel.create({ ...cart, id: Carts.idUnico });
+                const cartData = {
+                    userId: userId,
+                }
+                const cart = await cartModel.create(cartData);
+                console.log(cart._id);
+                await userModel.findByIdAndUpdate(
+                    userId,
+                    { $push: { cart: { carts: cart._id} } }
+                );
+                return cart._id;
                 this.status = 1;
                 this.statusMsg = "Carrito registrado en la base de datos";
-              } else {
-                this.status = -1;
-                this.statusMsg = `Campos obligatorios incompletos`;
-              }
+            //   } else {
+            //     this.status = -1;
+            //     this.statusMsg = `Campos obligatorios incompletos`;
+            //   }
             } catch (err) {
               this.status = -1;
               this.statusMsg = `addCart: ${err}`; 
         }
       };
+
+
+      addCartToUser = async (userId, cartId) => {
+        try {
+            let user = await userModel.findOne({ '_id': new mongoose.Types.ObjectId(userId) });
+            let cart = await cartModel.findOne({ '_id': new mongoose.Types.ObjectId(cartId) });
+            console.log(user);
+            console.log(cart);
+            let carts = user.cart;
+            console.log( carts);
+            let index = carts.findIndex((c) => c.carts._id == cartId);
+            console.log(index);
+    
+            if (index >= 0) {
+                // Carrito ya existe para este usuario
+                return "Cart already exists for this user.";
+            } else {
+                let newCart = {
+                    carts: cart,
+                };
+                console.log(cart.products, "productos cart");
+                console.log(cartId);
+                console.log(newCart, "new cart");
+                console.log(user.cart.carts, "cart");
+                let result = await userModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(userId) }, {$push:{"cart":newCart}});
+                await cartModel.findByIdAndUpdate({ '_id': new mongoose.Types.ObjectId(cartId) }, { $set: { email: user.email } });
+                return result;
+            }
+        } catch(err) {
+            return err;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
 
       addEmailToCart = async (cartId, userEmail) => {
     try {
@@ -114,40 +192,76 @@ class Carts {
         }
     }
 
-    createCartAndAddProduct = async (userId, productId) => {
-        try {
-            // Verificar si el usuario ya tiene un carrito
-            const existingCart = await Carts.getCartByUserId(userId);
+    // addCartAndAddProduct = async (cart, productId) => {
+    //     try {
+    //         // Verificar si el carrito existe
+    //         let existingCart = await cartModel.findOne({ /* condición para buscar el carrito */ });
     
-            if (!existingCart) {
-                // Si no existe un carrito, crea uno nuevo y agrégale el producto
-                const newCart = {
-                    userId,
-                    products: [{ product: productId, quantity: 1 }] // Agrega el primer producto al carrito
-                };
-                await Carts.addCart(newCart); // Supongamos que tienes una función para agregar un carrito
+    //         if (!existingCart) {
+    //             // Si el carrito no existe, crea uno nuevo
+    //             const newCart = { /* datos para crear el carrito */ };
+    //             existingCart = await cartModel.create(newCart);
+    //         }
     
-                return { success: true, message: "Carrito creado y producto agregado con éxito." };
-            } else {
-                // Si ya tiene un carrito, verifica si el producto ya está en el carrito
-                const productInCart = existingCart.products.find(item => item.product == productId);
+    //         // Ahora, agrega el producto al carrito existente
+    //         let productsInCart = existingCart.products;
+    //         let index = productsInCart.findIndex((p) => p.product._id == productId);
     
-                if (productInCart) {
-                    // Si el producto ya está en el carrito, aumenta la cantidad
-                    productInCart.quantity++;
-                } else {
-                    // Si el producto no está en el carrito, agrégalo
-                    existingCart.products.push({ product: productId, quantity: 1 });
-                }
+    //         if (index >= 0) {
+    //             // Si el producto ya está en el carrito, aumenta la cantidad
+    //             productsInCart[index].quantity++;
+    //         } else {
+    //             // Si el producto no está en el carrito, agrégalo
+    //             productsInCart.push({ product: productId, quantity: 1 });
+    //         }
     
-                await Carts.updateCart(existingCart); // Supongamos que tienes una función para actualizar el carrito
+    //         // Actualiza el carrito en la base de datos
+    //         await cartModel.findByIdAndUpdate(existingCart._id, { products: productsInCart });
     
-                return { success: true, message: "Producto agregado al carrito con éxito." };
-            }
-        } catch (err) {
-            return { success: false, message: err.message };
-        }
-    };
+    //         this.status = 1;
+    //         this.statusMsg = "Producto agregado al carrito con éxito.";
+    //     } catch (err) {
+    //         this.status = -1;
+    //         this.statusMsg = `Error al agregar producto al carrito: ${err}`;
+    //     }
+    // };
+
+
+
+    // createCartAndAddProduct = async (userId, productId) => {
+    //     try {
+    //         // Verificar si el usuario ya tiene un carrito
+    //         const existingCart = await Carts.getCartByUserId(userId);
+    
+    //         if (!existingCart) {
+    //             // Si no existe un carrito, crea uno nuevo y agrégale el producto
+    //             const newCart = {
+    //                 userId,
+    //                 products: [{ product: productId, quantity: 1 }] // Agrega el primer producto al carrito
+    //             };
+    //             await Carts.addCart(newCart); // Supongamos que tienes una función para agregar un carrito
+    
+    //             return { success: true, message: "Carrito creado y producto agregado con éxito." };
+    //         } else {
+    //             // Si ya tiene un carrito, verifica si el producto ya está en el carrito
+    //             const productInCart = existingCart.products.find(item => item.product == productId);
+    
+    //             if (productInCart) {
+    //                 // Si el producto ya está en el carrito, aumenta la cantidad
+    //                 productInCart.quantity++;
+    //             } else {
+    //                 // Si el producto no está en el carrito, agrégalo
+    //                 existingCart.products.push({ product: productId, quantity: 1 });
+    //             }
+    
+    //             await Carts.updateCart(existingCart); // Supongamos que tienes una función para actualizar el carrito
+    
+    //             return { success: true, message: "Producto agregado al carrito con éxito." };
+    //         }
+    //     } catch (err) {
+    //         return { success: false, message: err.message };
+    //     }
+    // };
 
 
     

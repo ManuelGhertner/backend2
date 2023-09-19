@@ -12,7 +12,7 @@ export const addProducts = async (req, res, next) =>{
     try{
         const productData = req.body;
         const loggedInUser = req.session.user;
-        productData.owner = loggedInUser.id;
+        productData.owner = loggedInUser.id; // ESTA LINEA Y LAS DOS SUPERIORES DEBEN SER COMENTADAS PARA QUE CORRA EL TEST.
         await product.addProduct(req.body);
         const status = product.status;
         if(product.status === 1){

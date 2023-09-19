@@ -51,6 +51,15 @@ class Users{
         } 
     };
 
+    getUsersById = async (id) =>{
+        try {
+            return await userModel.findById({"_id": new mongoose.Types.ObjectId(id)}).lean();
+        } catch (err){
+            this.status = -1;
+            this.statusMsg = `getUserById : ${err}`;
+        }
+    };
+
     addCartToUser = async (userId, cartId) => {
         try {
             let user = await userModel.findOne({ '_id': new mongoose.Types.ObjectId(userId) });
