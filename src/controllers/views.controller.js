@@ -93,14 +93,40 @@ export const login = async(req, res) =>{
 
 export const cart = async (req, res) => {
     try {
-        let cid = req.params.cid;
-        let cart = await carts.getCartByUserId(cid);
+        let pid = req.params.pid;
+        let cart = await carts.getCartByUserId(pid);
         let productsInCart = cart.products;
         console.log(cart);
 
         res.render("carts", {productsInCart})
     } catch(err) {
         res.status(400).json(err.message)
+    }
+};
+
+export const renderUserCart = async (req, res) => {
+    try {
+        let pid = req.params.pid;
+        const loggedInUser = req.session.user; // Obtén el usuario logueado
+console.log(loggedInUser.id);
+const user = await usuario.getUsersById(loggedInUser.id)
+console.log(user.cart[0].carts);
+const idHex = user.cart[0].carts._id.toString();
+console.log(idHex, "render");
+
+
+        // Obtener el carrito del usuario por su ID de carrito
+        const userCart = await carts.getCartById(idHex);
+            console.log(pid, "el pid");
+        if (userCart) {
+            // Renderizar la vista "carts" pasando el carrito y el usuario logueado
+            res.render("carts", {pid});
+        } else {
+            // El carrito no fue encontrado
+            res.status(404).json({ message: "Carrito no encontrado" });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 };
 

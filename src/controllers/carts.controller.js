@@ -78,7 +78,7 @@ console.log(idHex);
         // Llama a la función que agrega el producto al carrito usando cartId
         const result = await cart.addProductToCart(idHex, pid);
 
-        if (result.success) {
+        if (result) {
             res.status(200).send({ status: "ok", message: "Producto agregado al carrito con éxito." });
         } else {
             res.status(500).send({ status: "error", message: result.message });
