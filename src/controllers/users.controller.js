@@ -1,5 +1,5 @@
 import Users from "../dao/services/users.dbclass.js";
-
+import nodemailer from "nodemailer";
 const user = new Users();
 
 // CREAR USUARIO
@@ -37,6 +37,18 @@ export const addCartToUser = async(req, res) => {
     }
 };
 
+const transport = nodemailer.createTransport({
+    service: "gmail",
+    port: 587,
+    auth:{
+        user: "manuelghertner@gmail.com",
+        pass: "mfxomsbkbifbxgzu" // pasarlo al .env
+    },
+    tls: {
+        rejectUnauthorized: false // Omitir la verificación del certificado SSL
+    }
+})
+
 export const getUsersInactiveForTwoDays = async (req, res) => {
     try {
         const inactiveUsers = await user.lastLogin();
@@ -44,7 +56,20 @@ export const getUsersInactiveForTwoDays = async (req, res) => {
         // En este punto, 'inactiveUsers' contiene los usuarios inactivos.
         // Puedes realizar cualquier acción adicional, como enviar un correo electrónico a los usuarios inactivos.
 
-        res.status(200).json({ message: 'Usuarios inactivos en los últimos 2 minutos', data: inactiveUsers });
+        for (const user of inactiveUsers) {
+            await transport.sendMail({
+                from: "Ecommerce <manuelghertner@gmail.com>",
+                to: user.email,
+                subject: "Cuenta eliminada por inactividad",
+                html: `
+                    <h1>Tu cuenta ha sido eliminada</h1>
+                    <p>Tu cuenta ha sido eliminada debido a la inactividad durante los últimos 2 dias.</p>
+                `,
+                attachments: []
+            });
+        }
+
+        res.status(200).json({ message: 'Usuarios inactivos en los últimos 2 dias', data: inactiveUsers });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al obtener usuarios inactivos', error: error.message });

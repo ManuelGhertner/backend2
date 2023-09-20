@@ -96,7 +96,7 @@ class Users{
     lastLogin = async () =>{
         try{
 
-            const twoDaysAgo = moment().subtract(2, "minutes");
+            const twoDaysAgo = moment().subtract(2, "days");
             const inactiveUsers = await userModel.find({
                 lastLogin: {$lt: twoDaysAgo.toDate()},
             })
@@ -104,7 +104,7 @@ class Users{
             await userModel.deleteMany({
                 _id: {$in: inactiveUsers.map((user) => user._id)}
             })
-            
+
             return inactiveUsers;
 
         } catch (err){
