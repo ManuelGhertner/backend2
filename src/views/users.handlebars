@@ -19,19 +19,22 @@
             <tbody>
                 {{#each users}}
                 <tr>
-                    <td>{{this.fistName}}</td>
+                    <td>{{this.firstName}}</td>
                     <td>{{this.lastName}}</td>
                     <td>{{this.email}}</td>
-                         <td>
-  <div class="role-select">
-    <select class="form-select" data-user-id="{{this._id}}">
-      <option value="user" {{#eq this.role "user"}}selected{{/eq}}>User</option>
-      <option value="admin" {{#eq this.role "admin"}}selected{{/eq}}>Admin</option>
-      <option value="premium" {{#eq this.role "premium"}}selected{{/eq}}>Premium</option>
-    </select>
-    <button class="update-role-button" data-user-id="{{this._id}}">Actualizar Rol</button>
-  </div>
+<td>
+    <p>Rol actual: {{this.role}}</p>
+    <form action="/api/users/updaterole/{{this._id}}" method="post">
+      <label for="newRole">Nuevo Rol:</label>
+      <select name="role" id="newRole">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+        <option value="premium">Premium</option>
+      </select>
+      <button type="submit">Actualizar Rol</button>
+    </form>
 </td>
+
                     <td>   <button class="delete-button" data-user-id="{{this._id}}">Eliminar</button></td>
                 </tr>
                 {{/each}}
@@ -63,5 +66,30 @@
       console.error('Error al enviar la solicitud DELETE:', error);
     }
   }
+})
+
+  
+</script>
+
+<script>
+
+document.addEventListener('change', (event) => {
+  if (event.target.classList.contains('form-select')) {
+    event.preventDefault(); // Evitar que se envíe el formulario automáticamente al cambiar la selección
+    const form = event.target.closest('.role-select-form');
+    if (form) {
+      form.submit();
+    }
+  }
 });
+
+
+
+
+
+
+
+
+
+
 </script>

@@ -3,7 +3,9 @@ import CustomError from "../dao/services/customError.js";
 import errorsDict from "../dictionary.js";
 import { addLogger } from "../dao/services/logger.service.js";
 const product = new factoryProduct("../src/db/products.json");
-
+import nodemailer from "nodemailer";
+import Users from "../dao/services/users.dbclass.js";
+const usuario = new Users();
 
 
 // AGREGAR PRODUCTOS
@@ -98,12 +100,73 @@ export const updateProduct = async (req, res) => {
 
 // ELIMINAR PRODUCTOS
 
-export const deleteProduct = async (req, res) =>{
-    try{
-        const pid = req.params.pid;
-        await product.deleteProduct(pid);
-        res.status(200).send({ status: "OK", msg: "Producto eliminado"});
-    } catch (err){
-        res.status(500).send({ status: "Error", error: err})
-    };
-};
+
+const transport = nodemailer.createTransport({
+    service: "gmail",
+    port: 587,
+    auth:{
+        user: "manuelghertner@gmail.com",
+        pass: "mfxomsbkbifbxgzu" // pasarlo al .env
+    },
+    tls: {
+        rejectUnauthorized: false // Omitir la verificación del certificado SSL
+    }
+})
+
+// export const deleteProduct = async (req, res) =>{
+//     try{
+//         const pid = req.params.pid;
+//         await product.deleteProduct(pid);
+//         res.status(200).send({ status: "OK", msg: "Producto eliminado"});
+//     } catch (err){
+//         res.status(500).send({ status: "Error", error: err})
+//     };
+// };
+
+export const deleteProduct = async (req, res) => {
+    try {
+      const pid = req.params.pid;
+      const producto = await product.getProductById(pid);
+      const uid = producto.owner;
+      console.log(uid);
+      const deletedProduct = await product.deleteProduct(pid);
+      console.log(producto);
+      const user = await usuario.getUsersById(uid)
+      console.log(user);
+      const premium = user.role;
+      console.log(premium);
+      console.log(user.email);
+     
+  
+     
+  
+      if (user.role == 'premium') {
+        // El usuario es premium, enviar un correo electrónico de notificación  
+        await transport.sendMail({
+            from: 'Ecommerce <manuelghertner@gmail.com>',
+            to: user.email,
+            subject: 'Producto eliminado',
+            text: `El producto con ID ${pid} ha sido eliminado.`,
+            attachments: []
+        });
+          }
+        // await transport.sendMail({
+        //     from: "Ecommerce <manuelghertner@gmail.com>",
+        //     to: user.email,
+        //     subject: "Cuenta eliminada por inactividad",
+        //     html: `
+        //         <h1>Tu cuenta ha sido eliminada</h1>
+        //         <p>Tu cuenta ha sido eliminada debido a la inactividad durante los últimos 2 dias.</p>
+        //     `,
+        //     attachments: []
+        // });
+    //   }
+    if (!deletedProduct) {
+        return res.status(404).send({ status: 'Error', msg: 'Producto no encontrado' });
+      }
+      res.status(200).send({ status: 'OK', msg: 'Producto eliminado' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ status: 'Error', error: err });
+    }
+  };

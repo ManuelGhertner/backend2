@@ -86,3 +86,20 @@ export const deleteUser = async (req, res) =>{
         res.status(500).send({ status: "Error", error: err})
     };
 };
+
+export const updateUserRoleController = async (req, res) => {
+    const { pid } = req.params;
+    const { role } = req.body;
+  
+    try {
+      const updatedUser = await user.updateUserRole(pid, role);
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+  
+      res.status(200).json({ message: 'Rol de usuario actualizado', user: updatedUser });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al actualizar el rol', error: error.message });
+    }
+  };

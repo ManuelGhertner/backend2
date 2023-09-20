@@ -54,7 +54,8 @@ class Users{
 
     getUsersById = async (id) =>{
         try {
-            return await userModel.findById({"_id": new mongoose.Types.ObjectId(id)}).lean();
+            const users = await userModel.findById({"_id": new mongoose.Types.ObjectId(id)}).lean();
+            return users;
         } catch (err){
             this.status = -1;
             this.statusMsg = `getUserById : ${err}`;
@@ -120,6 +121,20 @@ class Users{
             return err;
         }
     };
+
+
+    updateUserRole = async (userId, newRole) =>{
+        try{
+            const updateUser = await userModel.findByIdAndUpdate(
+                userId,
+                {role: newRole},
+                {new: true}
+            );
+            return updateUser;
+        } catch (err){
+            throw err;
+        }
+    }
 }
 
 export default Users;

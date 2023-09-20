@@ -7,7 +7,7 @@ const productsRouter = Router();
 
 // AGREGAR PRODUCTO
 
-productsRouter.post("/products", addProducts); //despues agregar admin AGREGAR validatepPremiumOrAdmin !!!!11
+productsRouter.post("/products", validatepPremiumOrAdmin, addProducts); //despues agregar admin AGREGAR validatepPremiumOrAdmin !!!!11
 
 productsRouter.get("/products/:pid([a-zA-Z0-9]+)", getById);
 
