@@ -2,6 +2,7 @@ import userModel from "../models/users.model.js";
 import mongoose from "mongoose";
 import { createHash } from "../../utils.js";
 import cartModel from "../models/carts.model.js";
+import moment from "moment";
 
 class Users{
     constructor(){
@@ -88,6 +89,21 @@ class Users{
             }
         } catch(err) {
             return err;
+        }
+    }
+
+
+    lastLogin = async () =>{
+        try{
+
+            const twoDaysAgo = moment().subtract(2, "minutes");
+            const inactiveUsers = await userModel.find({
+                lastLogin: {$lt: twoDaysAgo.toDate()},
+            })
+            return inactiveUsers;
+
+        } catch (err){
+            console.log(err);
         }
     }
 }

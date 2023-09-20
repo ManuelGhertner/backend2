@@ -48,6 +48,9 @@ const initializePassport = () =>{
                 req.session.errorMessages = "Contraseña incorrecta";
                 return done(null, false, { message: "Contraseña incorrecta"});
             };
+
+            user.lastLogin = new Date();
+            await user.save()
             return done (null, user);       
         } catch (err){
             return done(err);

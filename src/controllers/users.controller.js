@@ -37,3 +37,17 @@ export const addCartToUser = async(req, res) => {
     }
 };
 
+export const getUsersInactiveForTwoDays = async (req, res) => {
+    try {
+        const inactiveUsers = await user.lastLogin();
+
+        // En este punto, 'inactiveUsers' contiene los usuarios inactivos.
+        // Puedes realizar cualquier acción adicional, como enviar un correo electrónico a los usuarios inactivos.
+
+        res.status(200).json({ message: 'Usuarios inactivos en los últimos 2 minutos', data: inactiveUsers });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al obtener usuarios inactivos', error: error.message });
+    }
+};
+

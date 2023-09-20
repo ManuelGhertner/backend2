@@ -22,7 +22,8 @@ const schema = new mongoose.Schema({
        default: [],
 
     },
-    role: { type: String, trim: true, default: "user", enum: ["user", "admin", "premium"] }
+    role: { type: String, trim: true, default: "user", enum: ["user", "admin", "premium"] },
+    lastLogin: { type: Date, default: null } // Agrega el campo lastLogin como tipo Date
 });
 
 const userModel = mongoose.model(collection, schema);

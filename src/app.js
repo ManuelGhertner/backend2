@@ -25,6 +25,7 @@ import cluster from "cluster";
 import { cpus } from "os";
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express';
+import mailRouter from "./routes/mail.routes.js";
 
 // import methodOverride from "method-override";
 
@@ -97,6 +98,7 @@ const io = new Server(httpServer, {
     server.use("/api", usersRouter)
     server.use("/api/sessions", sessionRoutes());
     server.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
+    server.use("/api", mailRouter);
     // server.use("/api",mockRouter )
     
     // PLANTILLAS
@@ -107,6 +109,30 @@ const io = new Server(httpServer, {
     server.use('/public', express.static(`${__dirname}/public`));
     
     
+    // const transport = nodemailer.createTransport({
+    //     service: "gmail",
+    //     port: 587,
+    //     auth:{
+    //         user: "manuelghertner@gmail.com",
+    //         pass: "mfxomsbkbifbxgzu" // pasarlo al .env
+    //     }
+    // })
+
+    // server.get("/mail", async(req,res) =>{
+    //     const result = await transport.sendMail({
+    //         from: "Ecommerce <manuelghertner@gmail.com>",
+    //         to: "manuelghertner@gmail.com",
+    //         subject: "Test",
+    //         html: `
+    //         <h1> Prueba </h1>
+    //         <p> Parrafo de prueba </p>
+    //         `,
+    //         attachments: []
+    //     })
+    //     res.status(200).send({status: "Ok", result: result});
+    // })
+
+
     
     server.all('*', (req, res, next) => {
         throw new CustomError(errorsDict.ROUTING_ERROR);
@@ -118,6 +144,12 @@ const io = new Server(httpServer, {
     });
     
     
+
+
+
+
+
+
     
     
     // EVENTOS SOCKET.IO
