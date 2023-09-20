@@ -100,6 +100,11 @@ class Users{
             const inactiveUsers = await userModel.find({
                 lastLogin: {$lt: twoDaysAgo.toDate()},
             })
+
+            await userModel.deleteMany({
+                _id: {$in: inactiveUsers.map((user) => user._id)}
+            })
+            
             return inactiveUsers;
 
         } catch (err){
