@@ -2,6 +2,7 @@
     <div class="row">
         <header class="bg-success p-3">
             <h1>PRODUCTOS EN CARRITO</h1>
+            <h1>ID CARRITO:{{carrito._id}}</h1>
         </header> 
     </div>
 
@@ -18,7 +19,7 @@
                     <th>Stock</th>
                     <th>Cantidad</th>
                 </tr>
-                {{#each productsInCart}}
+                {{#each carrito.products}}
                 <tr>
                     <td>{{this.product._id}}</td>
                     <td>{{this.product.title}}</td>
@@ -32,5 +33,9 @@
                 {{/each}}
             </thead>
         </table>
+          <form action="/api/carts/{{carrito._id}}/purchase" method="POST">
+            <!-- Aquí puedes incluir campos adicionales si es necesario -->
+            <button type="submit" class="btn btn-success m-2">Comprar</button>
+        </form>
     </div>
 </div>

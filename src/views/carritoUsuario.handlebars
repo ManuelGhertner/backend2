@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Carrito de Usuario</title>
+</head>
+<body>
+    <h1>Carrito de Usuario</h1>
+    <p>Usuario: {{carrito.userId}}</p>
+    
+    <h2>Productos en el Carrito:</h2>
+    <ul>
+        {{#each carrito.products}}
+        <li>
+            {{this.product.title}} (Cantidad: {{this.quantity}})
+        </li>
+        {{/each}}
+    </ul>
+    
+    <a href="/">Volver a la página principal</a>
+</body>
+</html>
+
+
+
+
+
+

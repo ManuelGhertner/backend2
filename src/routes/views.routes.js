@@ -1,4 +1,4 @@
-import { realTimeProducts, profile, register, login, verifySession, logout, cart, addProducts, getProducts, getAllProducts } from "../controllers/views.controller.js";
+import { realTimeProducts, profile, register, login, verifySession, logout, cart, addProducts, getProducts, getAllProducts, renderizarCarritoUsuario } from "../controllers/views.controller.js";
 import { Router } from "express";
 import passport from "passport";
 import {validate, validateAdmin, validatepPremiumOrAdmin} from "../middlewares/validate.middleware.js"
@@ -27,7 +27,7 @@ const routerViews = () =>{
  //CARTS
 // router.get("/api/carts/:cid", validate, cart);
 // router.get("/api/carts", validate, cart);
-router.get("api/carts/product/:pid", validate, cart)
+router.get("/api/carts/:cid", validate, renderizarCarritoUsuario)
 
 router.get("/profile", validate, profile);
 

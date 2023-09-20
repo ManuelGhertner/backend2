@@ -2,7 +2,12 @@
     <div class="row">
         <nav class="bg-success p-3 navbar">
             <h1>PRODUCTOS</h1>
-            <a href="/carts/{{user.cart._id}}" class="p-3"><img src="../public/assets/cart-round-1170-svgrepo-com.svg" alt="cart" width="40"></a>
+            {{!-- <form action="/api/carts/{{user.id}}" method="GET">
+    <button type="submit" class="btn btn-success m-2">
+        <i class="fas fa-shopping-cart"></i> carrito
+    </button>
+</form> --}}
+            <a href="api/carts/{{user.id}}" class="p-3"><img src="../public/assets/cart-round-1170-svgrepo-com.svg" alt="cart" width="40"></a>
         </nav> 
     </div>
     <div class="row">

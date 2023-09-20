@@ -93,42 +93,71 @@ export const login = async(req, res) =>{
 
 export const cart = async (req, res) => {
     try {
-        let pid = req.params.pid;
-        let cart = await carts.getCartByUserId(pid);
-        let productsInCart = cart.products;
-        console.log(cart);
+        // let cid = req.params.cid;
+        // let cart = await carts.getCartByUserId(cid);
+        // let productsInCart = cart.products;
+        // console.log(cart);
 
-        res.render("carts", {productsInCart})
+        res.render("carts")
     } catch(err) {
         res.status(400).json(err.message)
     }
 };
 
-export const renderUserCart = async (req, res) => {
+export const renderizarCarritoUsuario = async (req, res) => {
     try {
-        let pid = req.params.pid;
-        const loggedInUser = req.session.user; // Obtén el usuario logueado
-console.log(loggedInUser.id);
-const user = await usuario.getUsersById(loggedInUser.id)
-console.log(user.cart[0].carts);
-const idHex = user.cart[0].carts._id.toString();
-console.log(idHex, "render");
+        const cid = req.params.cid;
 
-
-        // Obtener el carrito del usuario por su ID de carrito
-        const userCart = await carts.getCartById(idHex);
-            console.log(pid, "el pid");
-        if (userCart) {
-            // Renderizar la vista "carts" pasando el carrito y el usuario logueado
-            res.render("carts", {pid});
-        } else {
-            // El carrito no fue encontrado
-            res.status(404).json({ message: "Carrito no encontrado" });
-        }
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        // Llama al servicio para obtener el carrito del usuario
+        const carrito = await carts.getCartByUserId(cid);
+        console.log(carrito);
+        // Renderiza la vista Handlebars con los datos del carrito
+        res.render("carts", { carrito });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
+
+
+// export const renderizarCarritos = async (req, res) => {
+//     try {
+//         const cid = req.params.userId;
+
+//         // Lógica para obtener los carritos del usuario según el userId
+//         // ...
+//         await carts.getCartByUserId(cid);
+//         // Renderiza la vista "carts" con el ID del usuario
+//         res.render("carts", { cid });
+//     } catch (err) {
+//         res.status(500).json({ message: err.message });
+//     }
+// };
+
+// export const renderUserCart = async (req, res) => {
+//     try {
+//         let pid = req.params.pid;
+//         const loggedInUser = req.session.user; // Obtén el usuario logueado
+// console.log(loggedInUser.id);
+// const user = await usuario.getUsersById(loggedInUser.id)
+// console.log(user.cart[0].carts);
+// const idHex = user.cart[0].carts._id.toString();
+// console.log(idHex, "render");
+
+
+//         // Obtener el carrito del usuario por su ID de carrito
+//         const userCart = await carts.getCartById(idHex);
+//             console.log(pid, "el pid");
+//         if (userCart) {
+//             // Renderizar la vista "carts" pasando el carrito y el usuario logueado
+//             res.render("carts", {pid});
+//         } else {
+//             // El carrito no fue encontrado
+//             res.status(404).json({ message: "Carrito no encontrado" });
+//         }
+//     } catch (err) {
+//         res.status(500).json({ message: err.message });
+//     }
+// };
 
 // VERIFICAR SESION
 

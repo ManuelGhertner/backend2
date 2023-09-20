@@ -17,9 +17,10 @@ export const createCart = async(req, res) => {
     
 // Obtén el ID del usuario loggeado (asumiendo que está en req.session.user.id)
 const userId = req.session.user.id;
-
+const loggedInUser = req.session.user; 
+const userEmail = loggedInUser.email;
 // Llama a la función addCart del servicio de carritos con el ID del usuario
-const result = await cart.addCart(userId);
+const result = await cart.addCart(userId, userEmail);
 console.log(userId);
 if (userId) {
     // Carrito creado con éxito
@@ -236,6 +237,7 @@ export const getCartByUserId = async (req, res) => {
 
         if (cartData) {
             res.status(200).send({ message: "Carrito encontrado.", data: cartData });
+            
         } else {
             res.status(400).send({ status: "error", message: "Carrito no encontrado" });
         }
@@ -243,6 +245,42 @@ export const getCartByUserId = async (req, res) => {
         res.status(500).send({ status: "error", message: err.message });
     }
 };
+
+// export const addEmailToCart = async (req, res) => {
+//     try {
+//         const cartId= req.params.pid; // Suponiendo que recibes cartId y userEmail en el cuerpo de la solicitud
+//         const loggedInUser = req.session.user; 
+//         const userEmail = loggedInUser.email;
+//         // Actualiza el campo 'email' del carrito con el ID proporcionado
+//         await cartModel.findByIdAndUpdate(
+//             { '_id': new mongoose.Types.ObjectId(cartId) },
+//             { $set: { email: userEmail } }
+//         );
+
+//         res.status(200).send({ status: 'ok', message: 'Email agregado al carrito' });
+//     } catch (err) {
+//         res.status(500).send({ status: 'error', message: err.message });
+//     }
+// };
+
+export const addEmailToCart = async (req, res) => {
+    try {
+        const cartId= req.params.pid
+        const loggedInUser = req.session.user; 
+        const userEmail = loggedInUser.email;
+      await cart.addEmailToCart(cartId, userEmail);
+      console.log(userEmail);
+      console.log(cartId);
+  
+      if (!cartId) {
+        return res.status(404).json({ status: "error", message: "Carrito no encontrado" });
+      }
+  
+      return res.status(200).json({ status: "ok", message: "Correo electrónico agregado al carrito" });
+    } catch (err) {
+      return res.status(500).json({ status: "error", message: err.message });
+    }
+  };
 
 // export const purchaseCart = async (req, res) => {
 //     const cartId = req.params.cid;

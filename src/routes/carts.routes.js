@@ -1,12 +1,13 @@
-import { addProductToCart, createCart, getCarts, deleteCart, getCartById, getCartByUserId, purchaseCart } from "../controllers/carts.controller.js"
+import { addProductToCart, createCart, getCarts, deleteCart, getCartById, getCartByUserId, purchaseCart, addEmailToCart } from "../controllers/carts.controller.js"
 import { validate, validateAdmin } from "../middlewares/validate.middleware.js";
 
 import { Router } from "express";
 
 const cartsRouter = Router();
 
-cartsRouter.post("/carts",createCart , validate);
+cartsRouter.post("/carts",createCart, validate);
 cartsRouter.get("/carts",  getCarts);
+cartsRouter.post("/carts/confirm/:pid",addEmailToCart )
 cartsRouter.get("/carts/:cid",  getCartByUserId);
 cartsRouter.post("/carts/product/:pid",  addProductToCart);  
 // cartsRouter.post("/carts/:pid", createCartAndAddProduct);

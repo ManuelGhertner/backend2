@@ -22,12 +22,13 @@ class Carts {
         return Object.keys(obj).length === 0;
       };
 
-      addCart = async(userId) =>{
+      addCart = async(userId, userEmail) =>{
         try{
             // if (!Carts.#objEmpty(cart)) {
                 // await cartModel.create({ ...cart, id: Carts.idUnico });
                 const cartData = {
                     userId: userId,
+                    email: userEmail
                 }
                 const cart = await cartModel.create(cartData);
                 console.log(cart._id);
@@ -47,6 +48,18 @@ class Carts {
               this.statusMsg = `addCart: ${err}`; 
         }
       };
+
+
+      addEmailToCart = async (cartId, userEmail) => {
+        try {
+            await cartModel.findByIdAndUpdate(
+                { '_id': new mongoose.Types.ObjectId(cartId) },
+                { $set: { email: userEmail } }
+            );
+        } catch (err) {
+            return err;
+        }
+    };
 
 
       addCartToUser = async (userId, cartId) => {
