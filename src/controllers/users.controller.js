@@ -76,3 +76,13 @@ export const getUsersInactiveForTwoDays = async (req, res) => {
     }
 };
 
+
+export const deleteUser = async (req, res) =>{
+    try{
+        const pid = req.params.pid;
+        await user.deleteUsers(pid);
+        res.status(200).send({ status: "OK", msg: "Usuario eliminado"});
+    } catch (err){
+        res.status(500).send({ status: "Error", error: err})
+    };
+};

@@ -13,6 +13,7 @@
                     <th>Apellido</th>
                     <th>Mail</th>
                     <th>Rol</th>
+                    <th>Eliminar</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,11 +22,46 @@
                     <td>{{this.fistName}}</td>
                     <td>{{this.lastName}}</td>
                     <td>{{this.email}}</td>
-                    <td>{{this.role}}</td>
-                    <td>   <button class="delete-button" data-product-id="{{this._id}}">Eliminar</button></td>
+                         <td>
+  <div class="role-select">
+    <select class="form-select" data-user-id="{{this._id}}">
+      <option value="user" {{#eq this.role "user"}}selected{{/eq}}>User</option>
+      <option value="admin" {{#eq this.role "admin"}}selected{{/eq}}>Admin</option>
+      <option value="premium" {{#eq this.role "premium"}}selected{{/eq}}>Premium</option>
+    </select>
+    <button class="update-role-button" data-user-id="{{this._id}}">Actualizar Rol</button>
+  </div>
+</td>
+                    <td>   <button class="delete-button" data-user-id="{{this._id}}">Eliminar</button></td>
                 </tr>
                 {{/each}}
             </tbody>
         </table>
     </div>
 <a href="/logout" class="btn btn-danger m-2"><i class="fas fa-sign-out-alt"></i>Salir</a>
+
+
+<script>
+
+    document.addEventListener('click', async (event) => {
+  if (event.target.classList.contains('delete-button')) {
+    const userId = event.target.getAttribute('data-user-id');
+    
+    try {
+      const response = await fetch(`/api/users/${userId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // La solicitud DELETE fue exitosa, puedes actualizar la página o realizar otras acciones necesarias.
+        location.reload(); // Recargar la página, por ejemplo.
+      } else {
+        // Manejar errores si la solicitud DELETE no fue exitosa.
+        console.error('Error al eliminar el producto.');
+      }
+    } catch (error) {
+      console.error('Error al enviar la solicitud DELETE:', error);
+    }
+  }
+});
+</script>

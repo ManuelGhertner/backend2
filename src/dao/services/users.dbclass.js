@@ -111,6 +111,15 @@ class Users{
             console.log(err);
         }
     }
+
+    deleteUsers = async(id) =>{
+        try{
+            const deleter = await userModel.deleteOne({"_id": new mongoose.Types.ObjectId(id)});
+            deleter.deletedCount === 0 ? console.log("El ID no existe") : console.log("Usuario eliminado");;
+        } catch (err) {
+            return err;
+        }
+    };
 }
 
 export default Users;

@@ -26,7 +26,7 @@ import { cpus } from "os";
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express';
 import mailRouter from "./routes/mail.routes.js";
-
+import handlebars from "handlebars";
 // import methodOverride from "method-override";
 
 // EXPRESS Y SOCKET.IO
@@ -55,6 +55,10 @@ const swaggerOptions = {
     },
     apis: ['./docs/**/*.yaml'] // todos los archivos de configuración de rutas estarán aquí
 }
+
+handlebars.registerHelper('eq', function (a, b, options) {
+    return a === b ? options.fn(this) : options.inverse(this);
+  });
 const specs = swaggerJsdoc(swaggerOptions);
 
 const io = new Server(httpServer, {

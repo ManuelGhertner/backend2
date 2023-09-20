@@ -1,5 +1,5 @@
 import { Router} from "express";
-import { createUser, getUsers, addCartToUser, getUsersInactiveForTwoDays } from "../controllers/users.controller.js";
+import { createUser, getUsers, addCartToUser, getUsersInactiveForTwoDays, deleteUser } from "../controllers/users.controller.js";
 import {validate, validateAdmin, validatepPremiumOrAdmin} from "../middlewares/validate.middleware.js"
 
 const usersRouter = Router();
@@ -10,6 +10,7 @@ usersRouter.post("/users", createUser);
 
 usersRouter.get("/users",validateAdmin, getUsers);
 
+usersRouter.delete("/users/:pid", validateAdmin, deleteUser);
 
 usersRouter.post("/users/:cid/cart/:pid",  addCartToUser);  
 
