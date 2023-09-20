@@ -4,10 +4,13 @@ import cartModel from "../dao/models/carts.model.js";
 import { generateToken } from "../utils.js";
 import { store } from "../utils.js";
 import Carts from "../dao/services/carts.dbclass.js";
+import Users from "../dao/services/users.dbclass.js";
+import userModel from "../dao/models/users.model.js";
 
 
 const products = new ProductsDB();
 const carts = new Carts();
+const users = new Users();
 
 // REALTIME PRODUCTS
 export const realTimeProducts = async (req, res) => {
@@ -44,6 +47,16 @@ export const getProducts = async (req, res) => {
       res.status(500).send("Error al obtener tus productos.");
     }
   };
+
+  export const getUsers = async(req, res) => {
+    try {
+        const allUsers = await userModel.find().lean();
+        // res.status(200).send({ status: "ok", allUsers })
+        res.render("users", {users: allUsers})
+    } catch(err) {
+        res.status(500).send({ status: "error", message: err.message })
+    }
+};
 
   //OBTENER TODOS LOS PRODUCTOS
 

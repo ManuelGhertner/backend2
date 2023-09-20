@@ -1,4 +1,4 @@
-import { realTimeProducts, profile, register, login, verifySession, logout, cart, addProducts, getProducts, getAllProducts, renderizarCarritoUsuario } from "../controllers/views.controller.js";
+import { realTimeProducts, profile, register, login, verifySession, logout, cart, getUsers, addProducts, getProducts, getAllProducts, renderizarCarritoUsuario } from "../controllers/views.controller.js";
 import { Router } from "express";
 import passport from "passport";
 import {validate, validateAdmin, validatepPremiumOrAdmin} from "../middlewares/validate.middleware.js"
@@ -31,6 +31,7 @@ router.get("/api/carts/:cid", validate, renderizarCarritoUsuario)
 
 router.get("/profile", validate, profile);
 
+router.get("/usuarios",validateAdmin,getUsers)
 
 // LOGIN
 router.post("/login", passport.authenticate("login", { failureRedirect: "/failedLogin" }), login);
