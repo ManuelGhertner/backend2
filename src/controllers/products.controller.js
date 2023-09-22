@@ -1,4 +1,4 @@
-import factoryProduct from "../dao/services/factory.js";
+import factoryProduct from "../dao/services/factory.js"
 import CustomError from "../dao/services/customError.js";
 import errorsDict from "../dictionary.js";
 import { addLogger } from "../dao/services/logger.service.js";

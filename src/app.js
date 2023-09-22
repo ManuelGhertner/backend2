@@ -33,13 +33,13 @@ import handlebars from "handlebars";
 
 
 
-if(cluster.isPrimary){
-   for (let i = 0; i < cpus().length; i++) cluster.fork();
-   cluster.on("exit", (worker, code, signal) =>{
-    console.log(`Se cerro el worker ${worker.process.pid}`);
-    cluster.fork();
-   })
-} else {
+// if(cluster.isPrimary){
+//    for (let i = 0; i < cpus().length; i++) cluster.fork();
+//    cluster.on("exit", (worker, code, signal) =>{
+//     console.log(`Se cerro el worker ${worker.process.pid}`);
+//     cluster.fork();
+//    })
+// } else {
     
 const server = express();
 
@@ -170,7 +170,7 @@ const io = new Server(httpServer, {
     } catch (err){
         console.log(err);
     };
-}
+// }
 
 
 
