@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+
 import { Router} from "express";
 import { mailing } from "../controllers/mail.controller.js";
 const mailRouter = Router();
