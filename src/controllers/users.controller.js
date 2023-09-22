@@ -1,28 +1,36 @@
 import Users from "../dao/services/users.dbclass.js";
 import nodemailer from "nodemailer";
+import CustomError from "../dao/services/customError.js";
+import errorsDict from "../dictionary.js";
 const user = new Users();
 
-export const createUser = async (req, res) => {
+export const createUser = async (req, res, next) => {
   try {
     const data = await user.addUser(req.body);
     console.log(data);
     res.status(200).send({ status: "ok", message: `USER creado`, data });
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const getUsers = async (req, res) => {
+export const getUsers = async (req, res, next) => {
   try {
     const users = await user.getUsers();
     res.status(200).send({ status: "ok", users });
     console.log(users);
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const addCartToUser = async (req, res) => {
+export const addCartToUser = async (req, res, next) => {
   try {
     const { cid, pid } = req.params;
 
@@ -31,7 +39,10 @@ export const addCartToUser = async (req, res) => {
       .status(200)
       .send({ status: "ok", message: "Carrito agregado al usuario" });
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
@@ -47,7 +58,7 @@ const transport = nodemailer.createTransport({
   },
 });
 
-export const getUsersInactiveForTwoDays = async (req, res) => {
+export const getUsersInactiveForTwoDays = async (req, res, next) => {
   try {
     const inactiveUsers = await user.lastLogin();
 
@@ -71,27 +82,27 @@ export const getUsersInactiveForTwoDays = async (req, res) => {
         data: inactiveUsers,
       });
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({
-        message: "Error al obtener usuarios inactivos",
-        error: error.message,
-      });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res, next) => {
   try {
     const pid = req.params.pid;
     await user.deleteUsers(pid);
     res.status(200).send({ status: "OK", msg: "Usuario eliminado" });
   } catch (err) {
-    res.status(500).send({ status: "Error", error: err });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const updateUserRoleController = async (req, res) => {
+export const updateUserRoleController = async (req, res, next) => {
   const { pid } = req.params;
   const { role } = req.body;
 
@@ -106,8 +117,9 @@ export const updateUserRoleController = async (req, res) => {
       .status(200)
       .json({ message: "Rol de usuario actualizado", user: updatedUser });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error al actualizar el rol", error: error.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };

@@ -88,79 +88,6 @@ paths:
         "500":
           description: 'ERROR'
 
-  #   put:
-  #     summary: Recibe un body para modificar un producto
-  #     tags:
-  #       - Productos
-  #     parameters:
-  #       - name: pid
-  #         in: path
-  #         required: true
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/requestBodies/Products'
-  #           example:
-  #             Title: "Ejemplo de Producto"
-  #             Description: "Descripción de ejemplo"
-  #             Code: 12345
-  #             Price: 99.99
-  #             Status: true
-  #             Stock: 10
-  #             Category: "Ejemplo de Categoría"
-  #             Thumbnail: []
-  #     responses:
-  #       "200":
-  #         description: 'OK'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 $ref: '#/components/schemas/Products'
-  #       "500":
-  #         description: 'ERROR'
-    
-  #   delete:
-  #     summary: Borra el prodcuto con el id indicado
-  #     tags:
-  #       - Productos
-  #     parameters:
-  #       - name: pid
-  #         in: path
-  #         required: true
-  #         description: Mongoose ObjectID
-  #     responses:
-  #       "200":
-  #         description: 'OK'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 $ref: '#/components/schemas/Products'
-  #       "500":
-  #         description: 'ERROR'
-
-  # /api/productsowned:
-
-  #   get:
-  #     summary: Retorna la lista de Productos de un usuario Premium
-  #     tags:
-  #       - Productos
-  #     responses:
-  #       "200":
-  #         description: 'OK'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 $ref: '#/components/schemas/Products'
-  #       "500":
-  #         description: 'ERROR'
     
 components:
   schemas:
@@ -173,23 +100,3 @@ components:
         products:
           type: array
 
-  # requestBodies:
-  #   Products:
-  #     type: object
-  #     properties:
-  #       Title:
-  #         type: string
-  #       Description:
-  #         type: string
-  #       Code:
-  #         type: number
-  #       Price:
-  #         type: number
-  #       Status:
-  #         type: Boolean
-  #       Stock:
-  #         type: number
-  #       Category:
-  #         type: string
-  #       Thumbnail:
-  #         type: array

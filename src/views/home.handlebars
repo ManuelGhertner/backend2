@@ -2,11 +2,7 @@
     <div class="row">
         <nav class="bg-success p-3 navbar">
             <h1>PRODUCTOS</h1>
-            {{!-- <form action="/api/carts/{{user.id}}" method="GET">
-    <button type="submit" class="btn btn-success m-2">
-        <i class="fas fa-shopping-cart"></i> carrito
-    </button>
-</form> --}}
+
             <a href="api/carts/{{user.id}}" class="p-3"><img src="../public/assets/cart-round-1170-svgrepo-com.svg" alt="cart" width="40"></a>
         </nav> 
     </div>
@@ -37,11 +33,7 @@
                         <p class="card-text"><b>Precio: </b> ${{this.price}}</p>
                         <p class="card-text"><b>Descripción: </b> {{this.description}}</p>
                         <a class="btn btn-info my-3" href="/products/{{this._id}}">DETALLE</a>
-                        {{!-- <form action="/api/carts/{{this._id}}" method="POST">
-                        <input type="hidden" name="productId" value="{{this._id}}"> --}}
-    {{!-- <button type="submit" class="btn btn-sucess m-2">
-        <i class="fas fa-sign-out-alt"></i>AÑADIR AL CARRITO
-    </button> --}}
+            
 </form>
 
 <form action="/api/carts/product/{{this._id}}" method="POST">
@@ -49,8 +41,6 @@
         <i class="fas fa-shopping-cart"></i> Agregar producto al Carrito
     </button>
 </form>
-                        {{!-- <a href="/api/carts" class="btn btn-success m-2"><i class="fas fa-sign-out-alt"></i>AÑADIR A CARRITO</a> --}}
-                        {{!-- <button type="button" class="btn btn-info button-add-cart" onclick="buttonAdd()" pid="{{this._id}}">AÑADIR A CARRITO</button> --}}
                     </div>
                 </div>
             </div>

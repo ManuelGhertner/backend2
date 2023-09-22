@@ -1,41 +1,41 @@
 <div class="container-fluid">
-    <div class="row">
-        <header class="bg-success p-3">
-            <h1>PRODUCTOS EN CARRITO</h1>
-            <h1>ID CARRITO:{{carrito._id}}</h1>
-        </header> 
-    </div>
+  <div class="row">
+    <header class="bg-success p-3">
+      <h1>PRODUCTOS EN CARRITO</h1>
+      <h1>ID CARRITO:{{carrito._id}}</h1>
+    </header>
+  </div>
 
-    <div class="row">
-        <table class="tableProducts">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Categoria</th>
-                    <th>Precio</th>
-                    <th>Codigo</th>
-                    <th>Stock</th>
-                    <th>Cantidad</th>
-                </tr>
-                {{#each carrito.products}}
-                <tr>
-                    <td>{{this.product._id}}</td>
-                    <td>{{this.product.title}}</td>
-                    <td>{{this.product.description}}</td>
-                    <td>{{this.product.category}}</td>
-                    <td>$ {{this.product.price}}</td>
-                    <td>{{this.product.code}}</td>
-                    <td>{{this.product.stock}}</td>
-                    <td>{{this.quantity}}</td>
-                </tr>
-                {{/each}}
-            </thead>
-        </table>
-          <form action="/api/carts/{{carrito._id}}/purchase" method="POST">
-            <!-- Aquí puedes incluir campos adicionales si es necesario -->
-            <button type="submit" class="btn btn-success m-2">Comprar</button>
-        </form>
-    </div>
+  <div class="row">
+    <table class="tableProducts">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Categoria</th>
+          <th>Precio</th>
+          <th>Codigo</th>
+          <th>Stock</th>
+          <th>Cantidad</th>
+        </tr>
+        {{#each carrito.products}}
+          <tr>
+            <td>{{this.product._id}}</td>
+            <td>{{this.product.title}}</td>
+            <td>{{this.product.description}}</td>
+            <td>{{this.product.category}}</td>
+            <td>$ {{this.product.price}}</td>
+            <td>{{this.product.code}}</td>
+            <td>{{this.product.stock}}</td>
+            <td>{{this.quantity}}</td>
+          </tr>
+        {{/each}}
+      </thead>
+    </table>
+    <form action="/api/carts/{{carrito._id}}/purchase" method="POST">
+
+      <button type="submit" class="btn btn-success m-2">Comprar</button>
+    </form>
+  </div>
 </div>

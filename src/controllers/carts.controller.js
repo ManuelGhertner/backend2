@@ -1,47 +1,48 @@
 import Carts from "../dao/services/carts.dbclass.js";
 import ProductsDB from "../dao/services/products.dbclass.js";
 import Users from "../dao/services/users.dbclass.js";
+import CustomError from "../dao/services/customError.js";
+import errorsDict from "../dictionary.js";
 
 const cart = new Carts();
 const product = new ProductsDB();
 const usuario = new Users();
 
 
-export const createCart = async (req, res) => {
+export const createCart = async (req, res, next) => {
   try {
     const userId = req.session.user.id;
     const loggedInUser = req.session.user;
     const userEmail = loggedInUser.email;
     const result = await cart.addCart(userId, userEmail);
-    console.log(userId);
     if (userId) {
       res.status(200).send({ status: "ok", message: "Carrito creado" });
     } else {
-      res.status(500).send({ status: "error", message: result.statusMsg });
+        throw new CustomError(errorsDict.NOT_FOUND_ERROR);
     }
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const getCarts = async (req, res) => {
+export const getCarts = async (req, res, next) => {
   try {
     const carts = await cart.getCarts();
     res.status(200).send({ status: "ok", carts });
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    throw new CustomError(errorsDict.NOT_FOUND_ERROR);
   }
 };
 
-export const addProductToCart = async (req, res) => {
+export const addProductToCart = async (req, res, next) => {
   try {
     const { pid } = req.params;
     const loggedInUser = req.session.user;
-    console.log(loggedInUser.id);
     const user = await usuario.getUsersById(loggedInUser.id);
-    console.log(user.cart[0].carts);
     const idHex = user.cart[0].carts._id.toString();
-    console.log(idHex);
 
     if (!idHex) {
       return res
@@ -62,25 +63,31 @@ export const addProductToCart = async (req, res) => {
           message: "Producto agregado al carrito con éxito.",
         });
     } else {
-      res.status(500).send({ status: "error", message: result.message });
+        throw new CustomError(errorsDict.INTERNAL_ERROR);
     }
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const deleteCart = async (req, res) => {
+export const deleteCart = async (req, res, next) => {
   const { cid } = req.params;
 
   try {
     const data = await cart.deleteCart(cid);
     res.status(200).send({ status: "ok", message: "Carrito eliminado", data });
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res, next) => {
   const { cid, pid } = req.params;
 
   try {
@@ -90,11 +97,14 @@ export const deleteProduct = async (req, res) => {
       .status(200)
       .send({ status: "ok", message: "Producto eliminado del carrito", data });
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const updateProductQuantity = async (req, res) => {
+export const updateProductQuantity = async (req, res, next) => {
   const { cid, pid } = req.params;
   const { quantity } = req.body;
 
@@ -104,11 +114,14 @@ export const updateProductQuantity = async (req, res) => {
       .status(200)
       .send({ status: "ok", message: "Producto actualizado", data });
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const deleteAllProducts = async (req, res) => {
+export const deleteAllProducts = async (req, res, next) => {
   const { cid } = req.params;
 
   try {
@@ -117,11 +130,14 @@ export const deleteAllProducts = async (req, res) => {
       .status(200)
       .send({ status: "ok", message: "Productos del carrito eliminado" });
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const getCartById = async (req, res) => {
+export const getCartById = async (req, res, next) => {
   const { cid } = req.params;
 
   try {
@@ -131,16 +147,17 @@ export const getCartById = async (req, res) => {
       res.status(200).send({ message: "Carrito encontrado.", data: data });
       console.log(carrito);
     } else {
-      res
-        .status(400)
-        .send({ status: "error", message: "Carrito no encontrado" });
+        throw new CustomError(errorsDict.NOT_FOUND_ERROR);
     }
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const getCartByUserId = async (req, res) => {
+export const getCartByUserId = async (req, res, next) => {
   const { cid } = req.params;
 
   try {
@@ -149,28 +166,26 @@ export const getCartByUserId = async (req, res) => {
     if (cartData) {
       res.status(200).send({ message: "Carrito encontrado.", data: cartData });
     } else {
-      res
-        .status(400)
-        .send({ status: "error", message: "Carrito no encontrado" });
+        throw new CustomError(errorsDict.NOT_FOUND_ERROR);
     }
   } catch (err) {
-    res.status(500).send({ status: "error", message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };
 
-export const addEmailToCart = async (req, res) => {
+export const addEmailToCart = async (req, res, next) => {
   try {
     const cartId = req.params.pid;
     const loggedInUser = req.session.user;
     const userEmail = loggedInUser.email;
     await cart.addEmailToCart(cartId, userEmail);
-    console.log(userEmail);
-    console.log(cartId);
+
 
     if (!cartId) {
-      return res
-        .status(404)
-        .json({ status: "error", message: "Carrito no encontrado" });
+        throw new CustomError(errorsDict.NOT_FOUND_ERROR);
     }
 
     return res
@@ -180,13 +195,15 @@ export const addEmailToCart = async (req, res) => {
         message: "Correo electrónico agregado al carrito",
       });
   } catch (err) {
-    return res.status(500).json({ status: "error", message: err.message });
-  }
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
 };
+}
 
 export const purchaseCart = async (req, res) => {
   const cartId = req.params.cid;
-  console.log(cartId, "cartId");
 
   try {
     const cartData = await cart.getCartById(cartId);
@@ -200,9 +217,12 @@ export const purchaseCart = async (req, res) => {
     if (successfulPurchase) {
       res.status(200).json({ message: "Compra exitosa" });
     } else {
-      res.status(400).json({ message: "No se pudo completar la compra" });
+        throw new CustomError(errorsDict.ROUTING_ERROR);
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
   }
 };

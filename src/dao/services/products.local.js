@@ -47,7 +47,7 @@ try {
     const prodToAdd = ({ id: prodId, ...product }); 
     productsFile.push(prodToAdd);
     await fs.promises.writeFile(this.path, JSON.stringify(productsFile, null, 2));
-    console.log(product); 
+    
     return `Se agregó el producto "${product.title}"`;
     
 } catch (error) {
@@ -73,11 +73,6 @@ try {
     }
   };
 
-//   getProducts = async () => {
-//     const products = await fs.promises.readFile(this.path, "utf-8");
-//     // const products = await productModel.find();
-//     return JSON.parse(products);
-//   };
 
   updateProducts = async (id, updates) => {
     const index = this.products.findIndex((product) => product.id === id);

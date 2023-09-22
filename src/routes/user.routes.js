@@ -4,7 +4,7 @@ import {validate, validateAdmin, validatepPremiumOrAdmin} from "../middlewares/v
 
 const usersRouter = Router();
 
-// AGREGAR PRODUCTO
+
 
 usersRouter.post("/users", createUser);
 
@@ -17,9 +17,7 @@ usersRouter.post("/users/:cid/cart/:pid",  addCartToUser);
 usersRouter.get("/usersinactive",getUsersInactiveForTwoDays)
 
 usersRouter.post('/users/updaterole/:pid', updateUserRoleController);
-// usersRouter.get("*", async (req, res) =>{
-//     res.status(400).send({status: "ERROR", msg: "Formato de parametro invalido"});
-// });
+
 
 
 export default usersRouter;

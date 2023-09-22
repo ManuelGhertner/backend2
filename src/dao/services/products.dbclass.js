@@ -5,7 +5,7 @@ class ProductsDB {
     static newId = 0;
 
     constructor(){
-        // this.products = [];
+
         this.status = 0;
         this.statusMsg = "INICIADO";
     };
@@ -16,8 +16,6 @@ class ProductsDB {
     showStatusMsg = () =>{
         return this.statusMsg;
     }
-
-// AGREGAR PRODUCTO
 
 addProduct = async (product) =>{
     try{
@@ -33,7 +31,6 @@ addProduct = async (product) =>{
     };
 };
 
-// OBTENER PRODUCTO POR ID
 getProductById = async (id) =>{
     try {
         return await productModel.findById({"_id": new mongoose.Types.ObjectId(id)}).lean();
@@ -43,7 +40,6 @@ getProductById = async (id) =>{
     }
 };
 
-// OBTENER PRODUCTOS
 getProducts = async(limit, page, sort, category, status) =>{
     let data = {
         limit: limit || 3,
@@ -91,8 +87,6 @@ getProducts = async(limit, page, sort, category, status) =>{
     }
 };
 
-// OBTENER PRODUCTOS CREADOS POR USUARIO 
-
 getProductsByOwner = async (limit, page, sort, category, status, ownerId) => {
     let data = {
       limit: limit || 3,
@@ -111,7 +105,6 @@ getProductsByOwner = async (limit, page, sort, category, status, ownerId) => {
       query.status = status;
     }
   
-    // Agrega el filtro para el propietario (owner)
     if (ownerId) {
       query.owner = ownerId;
     }
@@ -147,7 +140,6 @@ getProductsByOwner = async (limit, page, sort, category, status, ownerId) => {
     }
   };
 
-// ACTUALIZAR PRODUCTO
 updateProduct = async(id, object) =>{
     try{
         await productModel.findByIdAndUpdate({"_id": new mongoose.Types.ObjectId(id)}, object);
@@ -155,8 +147,6 @@ updateProduct = async(id, object) =>{
         return err;
     }
 };
-
-// ELIMINAR PRODUCTO
 
 deleteProduct = async(id) =>{
     try{

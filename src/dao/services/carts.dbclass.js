@@ -29,7 +29,7 @@ class Carts {
         email: userEmail,
       };
       const cart = await cartModel.create(cartData);
-      console.log(cart._id);
+
       await userModel.findByIdAndUpdate(userId, {
         $push: { cart: { carts: cart._id } },
       });
@@ -61,12 +61,10 @@ class Carts {
       let cart = await cartModel.findOne({
         _id: new mongoose.Types.ObjectId(cartId),
       });
-      console.log(user);
-      console.log(cart);
+
       let carts = user.cart;
-      console.log(carts);
+
       let index = carts.findIndex((c) => c.carts._id == cartId);
-      console.log(index);
 
       if (index >= 0) {
         return "Cart already exists for this user.";
@@ -74,10 +72,7 @@ class Carts {
         let newCart = {
           carts: cart,
         };
-        console.log(cart.products, "productos cart");
-        console.log(cartId);
-        console.log(newCart, "new cart");
-        console.log(user.cart.carts, "cart");
+
         let result = await userModel.findByIdAndUpdate(
           { _id: new mongoose.Types.ObjectId(userId) },
           { $push: { cart: newCart } }
@@ -216,26 +211,20 @@ class Carts {
       for (const productItem of products) {
         const producto = productItem.product;
         quantity = productItem.quantity;
-        console.log(producto, "producto");
+
         id = producto._id.toString();
         productIds.push(id);
         productQuantitys.push(quantity);
       }
-
-      console.log(productIds);
-      console.log(productQuantitys, "cantidad");
 
       for (let i = 0; i < productIds.length; i++) {
         const productId = productIds[i];
         const quantityToPurchase = productQuantitys[i];
 
         const item = await product.getProductById(productId);
-        console.log(item, "productos");
 
         if (item.stock < quantityToPurchase) {
-          console.log("No hay suficiente stock para el producto:", item.title);
           outOfStockProductIds.push(productId);
-          console.log(outOfStockProductIds, "outofstock");
         } else {
           console.log("Hay stock suficiente para el producto:", item.title);
           inStockProducts.push({
@@ -263,8 +252,6 @@ class Carts {
         totalAmount += item.price * quantityToPurchase;
         productsToRemoveFromCart.push(productId);
 
-        console.log(item.stock);
-
         await productModel.findByIdAndUpdate(
           { _id: new mongoose.Types.ObjectId(productId) },
           { $set: { stock: item.stock } }
@@ -280,8 +267,7 @@ class Carts {
         { _id: new mongoose.Types.ObjectId(cartId) },
         { $set: { totalAmount } }
       );
-      console.log(totalAmount, "totalamount");
-      console.log(inStockProducts, "instockproducts");
+
       return inStockProducts;
     } catch (err) {
       console.log(err);
@@ -290,7 +276,6 @@ class Carts {
   };
 
   calculateTotalAmount = async (inStockProducts) => {
-    console.log(inStockProducts, "isp");
     let totalAmount = 0;
     for (const inStockProduct of inStockProducts) {
       const product = inStockProduct.product;
