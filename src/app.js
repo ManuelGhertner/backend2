@@ -108,7 +108,7 @@ const io = new Server(httpServer, {
     // PLANTILLAS
     server.engine("handlebars", engine ({defaultLayout: "main", extname: ".handlebars"}));
     server.set('view engine', 'handlebars');
-    server.set('views', './views');
+    server.set('views', `${__dirname}/views`);
     // STATIC
     server.use('/public', express.static(`${__dirname}/public`));
     
