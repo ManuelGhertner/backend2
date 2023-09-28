@@ -1,4 +1,4 @@
-import { addProductToCart, createCart, getCarts, deleteCart, getCartById, getCartByUserId, purchaseCart, addEmailToCart } from "../controllers/carts.controller.js"
+import { addProductToCart, createCart, getCarts, deleteCart, getTickets, getCartById, getCartByUserId, purchaseCart, addEmailToCart } from "../controllers/carts.controller.js"
 import { validate, validateAdmin } from "../middlewares/validate.middleware.js";
 
 import { Router } from "express";
@@ -20,6 +20,8 @@ cartsRouter.delete("/cartdelete/:cid",  deleteCart);
 cartsRouter.post('/carts/:cid/purchase',validate ,purchaseCart);
 
 cartsRouter.get("/carts/:cid",  getCartById);
+
+cartsRouter.get("/tickets", getTickets)
 
 
 

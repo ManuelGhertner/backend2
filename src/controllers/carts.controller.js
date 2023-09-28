@@ -4,6 +4,7 @@ import Users from "../dao/services/users.dbclass.js";
 import CustomError from "../dao/services/customError.js";
 import errorsDict from "../dictionary.js";
 
+
 const cart = new Carts();
 const product = new ProductsDB();
 const usuario = new Users();
@@ -219,6 +220,18 @@ export const purchaseCart = async (req, res) => {
     } else {
         throw new CustomError(errorsDict.ROUTING_ERROR);
     }
+  } catch (err) {
+    req.logger.error(
+        `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`
+      );
+      next(err);
+  }
+};
+
+export const getTickets = async (req, res, next) => {
+  try {
+    const tickets = await cart.getTickets();
+    res.status(200).send({ status: "ok", tickets });
   } catch (err) {
     req.logger.error(
         `${req.method} ${req.url} ${new Date().toLocaleTimeString()}`

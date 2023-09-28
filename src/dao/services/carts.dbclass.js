@@ -328,6 +328,17 @@ class Carts {
       return false;
     }
   };
+  getTickets = async () => {
+    try {
+      const tickets = await ticketModel.find().lean();
+      return tickets;
+    } catch (err) {
+      console.log(err);
+        return false;
+    }
+  };
 }
+
+
 
 export default Carts;
